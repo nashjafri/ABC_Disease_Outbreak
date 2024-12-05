@@ -7,3 +7,34 @@ date: "2024-11-22"
 Here is an Rmd file for typing our code and final project writeup :)
 
 Test
+
+```{r}
+# This cell contains the distance function described on page 107 of the paper.
+
+# This function makes use of the Frobenius norm.  So we define a function which takes the Frobenius norm.
+
+frobenius <- function(A){
+  double_sum = 0
+  for (j in 1:ncol(A)) {
+    for (s in 1:nrow(A)) {
+      if(!is.na(A[i,j])){
+        double_sum = double_sum + (A[i,j])^2
+      }
+    }
+  }
+  return(sqrt(double_sum))
+}
+
+# Below is a function which gives the distance. Some sanity checks still need to be added. For instance checking that the matrices input are the same size.
+
+distance <- function(given_data1, given_data2, simulated_data1, simulated_data2){
+  # Not sure if below subtraction will be upset with NA values
+  distance1 = frobenius(given_data1-simulated_data1)
+  distance2 = frobenius(given_data2-simulated_data2)
+  total_distance = .5(distance1+distance2)
+  return(total_distance)
+}
+
+
+```
+
