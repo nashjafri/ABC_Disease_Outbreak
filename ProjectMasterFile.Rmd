@@ -1,112 +1,93 @@
 ---
-title: "ProjectMasterFile"
-output: pdf_document
-date: "2024-11-22"
+title: "Approximate Bayesian Computation for Disease Outbreak"
+author: 
+  - "Nasheed Jafri"
+  - "Abigail Watkins"
+output: html_document
 ---
 
-Here is an Rmd file for typing our code and final project writeup :)
+# Introduction
 
-### Probability matrix w_js 
+Epidemiological models are essential in understanding the spread of infectious diseases. However, many of these models, particularly those describing complex disease transmission dynamics, lead to intractable likelihood functions, making parameter estimation challenging. Approximate Bayesian Computation (ABC) offers a powerful solution to this issue by providing a simulation-based approach for fitting models to data. 
 
+In this project, we apply ABC to fit parameters in a model for influenza A and B strains, based on data from past outbreaks in Michigan and Seattle. The process involves drawing parameters from prior uniform distribution, simulating data based on those parameters, computing a similarity measure between simulated and observed data, and iteratively refining the parameter estimates. 
+The objective of this project is to replicate the model selection results presented in Section 3.3 of Tony and Stumpf's paper, "[Simulation-based model selection for dynamical systems in systems and population biology](https://watermark.silverchair.com/bioinformatics_26_1_104.pdf?token=AQECAHi208BE49Ooan9kkhW_Ercy7Dm3ZL_9Cf3qfKAc485ysgAAA3swggN3BgkqhkiG9w0BBwagggNoMIIDZAIBADCCA10GCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMjV15kHzFknWstbVZAgEQgIIDLvGZcFAgMxJ2FtxTGrsPvkAoO-imsFvwyY2RJRbPWpz_WYOR3ZYIIXnJpmCp_pOOlhB9fGwvPCCBNkFN7jjQvo-jtSs3vYGT9U9ABO1ngcGxGq0M_-xfz5QDNcfLJpdHphXjvXPmNQKw-FbmW7Z-lM4VADhWgRMXeAa69IcQWbf3O3M4YVlAfOhNibTRLt8QLpayutZlbZAwX6aC2a13wmjnKF6Vx3WJWazbewssqJov9CmNXprFKUqnhcq1QLZ4oaGSKYaxVFpmwB2ZylzUBbliQ3fYN6VRAfleLXrmyvOymid2GtXNnhrslyx6SN2OSgbXU0YIgfSgCk5OaCETsFY7VMGzLCuUTB776n6hDJKcZ-Hb7RelIJxLeOZteaxRVOiu-a9pG5NbQQuueQtS0C-kqHlVksEwUAucqzS9UXX3ucvmsIgYK-jQQ8jmtqPTjVkdFGhR1J3LzOw7VJCJQy4b_a_WZLDNS7bskxvvZgU7DOZAVHxYu1aPUHh3UaeJ-5oMwJ-sqFWg_6ZruUPk4L9f1KB1siRgSmxw-Eo4JHKXjSEsIXAylD3m_trgxEIxkeqgXFJ867U-qJxeG39ToS9BptAG_IGK-HfMD0ovPK9mKHXvrp32fRO5S0oiqaCMa8kV4DGwbZjaMArJDV9Ps3WNw_EE2E8m7J4UjiqLNQkihUtUM6d4xmJ-S4zo-qPJkr0ajWkDhQwkeJ1wsaYGXItivcoAB4lzyQmG3Zs5kQQIIa2m4hveEf2mDlglHMoPHTAN5hGG-9_LegexhFcKAZTguF4nNpozqAVsIQaj8DeAaHWY8AvjP5HjDTgYHs4ni3w7EjULGDSroFhBndTpCAMNjtY9yIqoh248Bf7ayWtBCXUx1yJyIamAPGeHej3nPnf80TACr2Of6fJicQ-hFcdVGzQj8qiq8b9GuOFFJ43SnZudftdAwwlA0mQb30ZhvgJvsYngGY752-NegVEd2F_r6N2Jkw-G-fzEnoObf6OXzGaYlNSq4_s4vGnQ38HGe_HPk7fdDIESUA35j1SbK5K83274IWvReND0Byubb2MmgZ4fJ90sCCKnjLeu9ho)" and demonstrate how ABC can be used to estimate model parameters for complex epidemic models. In particular, we recreate Figures 3(a) and 3(c) using a 4 parameter model on two sets of observed data - Table 2 (Addy et al., 1991) and Table 3 (Longini and Koopman, 1982) from the [Supplementary Data](https://academic.oup.com/bioinformatics/article/26/1/104/182571).
+
+# ABC using the 4-parameter model
+
+We assume that the virus can spread from infected individuals to susceptible ones, distinguishing between transmission within households and across the population at large (Longini and Koopman, 1982). Let $q_c$ denote the probability that a susceptible individual does not get infected from the community and $q_h$ the probability that a susceptible individual escapes infection within their household. The probability $w_{js}$, that $j$ out of the $s$ susceptible individuals in a household become infected, is then given by
+
+$$w_{js} = \binom{s}{j}w_{jj}(q_cq_h^j)^{s-j}\, \, , s = 1,2,\dots \, \, , j = 0, 1, \dots , s$$
+where $w_{0s} = q_c^s$ for $s = 0,1,2,\dots$ and $w_{ss} = 1 - \sum_{j = 0}^{s-1}w_{js}$.
+
+We aim to infer the pair of parameters, $q_h$ and $q_c$, from the model using data from Supplementary Tables 2 and 3. In this project, we focus on the 4-parameter model with parameters $(q_{c1}, q_{h1}, q_{c2}, q_{h2})$, which represents the hypothesis that each outbreak has its own infection-transmission rates.
+
+## Prior distribution
+
+Prior distributions of all parameters are chosen to be uniform over the range [0,1].
+
+**Prior distribution:** $q_{c1}, q_{h1}, q_{c2}, q_{h2} \sim \text{Uniform}[0,1]$
+
+In the following code, we pick 4 independent parameters from the distribution Uniform[0,1]. This returns a vector of length 4, which we use to later extract parameters $q_{c1}, q_{h1}, q_{c2}, q_{h2}$.
 
 ```{r}
-# Function to compute w_js matrix for a given time period
-generate_wjs_matrix <- function(q_c, q_h, max_sus) {
+prior_distribution <- function() {
+  runif(n = 4, min = 0, max = 1)     # Pick 4 independent parameters from Uniform[0,1]
+}
+```
+
+## Probability distribution $w_{js}$ (Likelihood)
+
+In the following code, we define a function that takes parameters $q_c$, $q_h$ and (maxmimum) household size, and returns the probability distribution matrix `w_js_matrix` with entries $w_{js}$ for $j = 0,1,\dots, s$, $s = 1 ,2, \dots,$household_size. This is done iteratively based on the formula $w_{js} = \binom{s}{j}w_{jj}(q_cq_h^j)^{s-j}$, $w_{0s} = q_c^s$ and $w_{ss} = 1 - \sum_{j = 0}^{s-1}w_{js}$.
+
+```{r}
+# Function to compute w_js matrix for a given outbreak
+W_js_matrix <- function(q_c, q_h, household_size) {
   
-  nCol <- max_sus            # Columns (Susceptibles) indexed by s = 1, 2, ..., max_sus
-  nRow <- max_sus + 1        # Rows (Infected) indexed by j = 0, 1, 2, ..., s
+  nCol <- household_size            # Columns (susceptible individuals) indexed by s = 1, 2, ..., household_size
+  nRow <- household_size + 1        # Rows (infected individuals) indexed by j = 0, 1, 2, ..., s
   
   # Initialize a (zero) matrix to store the probabilities w_js
   w_js_matrix <- matrix(0, nrow = nRow , ncol = nCol)
   
-  for (s in 1:nCol) {  # Iterate over number of susceptibles (1 to max_sus)
-    for (j in 0:s) {   # Iterate over number of infections (0 to s)
+  for (s in 1:nCol) {  # Iterate over number of susceptible individuals in a household (1 to household_size)
+    for (j in 0:s) {   # Iterate over number of infected individuals (0 to s)
       
       if (j == 0) {    
-          w_js_matrix[j + 1,s] <- q_c^s  # j = 0 corresponds to row 1 of the w_js matrix
-      } else if (j < s) {              # j corresponds to row (j + 1) of the w_js matrix
+          w_js_matrix[j + 1,s] <- q_c^s   # j = 0 corresponds to row 1 of the w_js matrix
+      } else if (j < s) {                 # j corresponds to row (j + 1) of the w_js matrix
           w_js_matrix[j + 1, s] <- choose(s, j) * w_js_matrix[j + 1, j] * (q_c * q_h^j)^(s - j)
-      } else {                         # j = s corresponds to row (s + 1) of the w_js matrix
+      } else {                            # j = s corresponds to row (s + 1) of the w_js matrix
           w_js_matrix[j + 1, s] <- 1 - sum(w_js_matrix[1:j,s])
       }
     }
   }
   
-  rownames(w_js_matrix) <- paste("j =", 0:max_sus)
-  colnames(w_js_matrix) <- paste("s =", 1:max_sus)
+  rownames(w_js_matrix) <- paste("j =", 0:household_size)
+  colnames(w_js_matrix) <- paste("s =", 1:household_size)
   
   return(w_js_matrix)
 }
 ```
 
+## Simulating data from the distribution $w_{js}$
+
+In this section, we simulate data based on the probability distribution $w_{js}$. The function below takes as inputs the parameters $q_c$, $q_h$, (maximum) household size, and the number of households (for each household size, as a vector), and returns a matrix of simulated data. The simulation is carried out by sampling (as many samples as in the observed data) the number of infected individuals for each household size. We then store their counts in a matrix to generate the data.
 
 ```{r}
-# # Function to generate augmented data matrix for two households
-# generate_augmented_matrix <- function(q_c1, q_h1, q_c2, q_h2, max_sus1, max_sus2) {
-#   # Generate w_js matrices for both households
-#   matrix1 <- generate_wjs_matrix(q_c1, q_h1, max_sus1)
-#   matrix2 <- generate_wjs_matrix(q_c2, q_h2, max_sus2)
-#   
-#   # Combine matrices into an augmented matrix
-#   nrow1 <- nrow(matrix1)
-#   nrow2 <- nrow(matrix2)
-#   max_rows <- max(nrow1, nrow2)
-#   
-#   # Pad matrix1 with zeros if it has fewer rows
-#   if (nrow1 < max_rows) {
-#     matrix1 <- rbind(matrix1, matrix(0, nrow = max_rows - nrow1, ncol = ncol(matrix1)))
-#   }
-#   
-#   # Pad matrix2 with zeros if it has fewer rows
-#   if (nrow2 < max_rows) {
-#     matrix2 <- rbind(matrix2, matrix(0, nrow = max_rows - nrow2, ncol = ncol(matrix2)))
-#   }
-#   
-#   augmented_matrix <- cbind(matrix1, matrix2)
-#   
-#   return(augmented_matrix)
-# }
-```
-
-
-```{r}
-# # Example to check if the function works..
-# 
-# # Parameters for the two households
-# q_c1 <- 0.8
-# q_h1 <- 0.6
-# q_c2 <- 0.7
-# q_h2 <- 0.5
-# 
-# # Number of susceptibles for each household
-# susceptibles1 <- 5 # Household 1
-# susceptibles2 <- 4 # Household 2
-# 
-# # Generate the augmented data matrix
-# augmented_matrix <- generate_augmented_matrix(q_c1, q_h1, q_c2, q_h2, susceptibles1, susceptibles2)
-# 
-# 
-# # Display the result
-# print(augmented_matrix)
-
-```
-
-### Simulating data from the distribution w_js:
-
-```{r}
-simulate_household_data <- function(w_js_matrix, max_sus, n_households) {
+simulate_household_data <- function(q_c, q_h, household_size, n_households) {
   
-  nCol <- max_sus            # Columns (Susceptibles) indexed by s = 1, 2, ..., max_sus
-  nRow <- max_sus + 1        # Rows (Infected) indexed by j = 0, 1, 2, ..., s
+  w_js_matrix <- W_js_matrix(q_c, q_h, household_size)
+  
+  nCol <- household_size            # Columns (susceptible individuals) indexed by s = 1, 2, ..., household_size
+  nRow <- household_size + 1        # Rows (infected individuals) indexed by j = 0, 1, 2, ..., s
   
   # Initialize a (zero) matrix to store the simulated data
   simulated_data <- matrix(0, nrow = nRow, ncol = nCol)
   
-  for (s in 1:nCol) { # Iterate over number of susceptibles
-    # Probabilities for the current column (w_js for susceptibles = s)
+  for (s in 1:nCol) { # Iterate over number of susceptible individuals in a household
+                                                     # Probabilities for the current column 
     probabilities <- w_js_matrix[1:(s + 1), s]       # Recall that (j+1) corresponds to row j of w_js_matrix
-    
-    # Note: probabilities <- w_js_matrix[, s] gives the same probabilities but of length max_sus, which creates problems in sampling
     
     # Simulate household infections using random sampling
     samples <- sample(0:s, size = n_households[s], replace = TRUE, prob = probabilities)
@@ -114,127 +95,151 @@ simulate_household_data <- function(w_js_matrix, max_sus, n_households) {
     # Count the occurrences of each infection level
     counts <- table(factor(samples, levels = 0:s))
     
+    # Store the simulated counts in the matrix
     # Ensure counts align with simulated_data row indices
     simulated_data[1:(s + 1), s] <- as.numeric(counts)
   }
   
-  rownames(simulated_data) <- paste("(Infected) j =", 0:max_sus)
-  colnames(simulated_data) <- paste("s =", 1:max_sus)
+  rownames(simulated_data) <- paste("(Infected) j =", 0:household_size)
+  colnames(simulated_data) <- paste("s =", 1:household_size)
   
   return(simulated_data)
 }
 ```
 
+We use the `sample` function to generate the samples, but the `rmultinom` function can also be used for the same purpose. The corresponding code for producing simulations using `rmultinom` is commented out below, but can be used if preferred. 
 
-Example of simulated data:
+```{r}
+# # Function to simulate household data using the multinomial distribution
+# simulate_household_data_multinomial <- function(q_c, q_h, household_size, n_households) {
+# 
+#   w_js_matrix <- W_js_matrix(q_c, q_h, household_size)
+# 
+#   nCol <- household_size            # Columns (susceptible individuals) indexed by s = 1, 2, ..., household_size
+#   nRow <- household_size + 1        # Rows (infected individuals) indexed by j = 0, 1, 2, ..., s
+# 
+#   # Initialize a (zero) matrix to store the simulated data
+#   simulated_data <- matrix(0, nrow = nRow, ncol = nCol)
+# 
+#   for (s in 1:nCol) { # Iterate over number of susceptible individuals in a household
+# 
+#     # Probabilities for the current column
+#     probabilities <- w_js_matrix[1:(s + 1), s]   # Get the w_js probabilities for current s (susceptibles)
+# 
+#     # Simulate the counts of households with j infections using the multinomial distribution
+#     household_counts <- rmultinom(1, n_households[s], probabilities)
+# 
+#     # Store the simulated counts in the matrix
+#     simulated_data[1:(s + 1), s] <- household_counts
+#   }
+# 
+#   rownames(simulated_data) <- paste("(Infected) j =", 0:household_size)
+#   colnames(simulated_data) <- paste("s =", 1:household_size)
+# 
+#   return(simulated_data)
+# }
+```
 
-**NOTE:** Need to modify the code below to take n_households to bethe same as observed data...
+**Example:** The following is an example of simulated data, given parameters $q_c = 0.8$, $q_h = 0.6$, maximum household size of 5 and number of households same as in Table 2:
 
 ```{r}
 # Parameters
 q_c <- 0.8                                    # Probability of avoiding community infection
 q_h <- 0.6                                    # Probability of escaping household infection
-susceptibles <- 5                             # Maximum number of susceptibles in a household
-n_households <- c(79,105,48,44,11)            # Number of households (same as observed data)
-
-# Generate the w_js matrix
-w_js_matrix <- generate_wjs_matrix(q_c, q_h, susceptibles)
+household_size <- 5                           # Maximum number of susceptible individuals in a household
+n_households <- c(79,105,48,44,11)            # Number of households (same as observed data in Table 2)
 
 # Simulate household data
-simulated_data <- simulate_household_data(w_js_matrix, susceptibles, n_households)
+simulated_data <- simulate_household_data(q_c, q_h, household_size, n_households)
 
 # Print the simulated table
 print(simulated_data)
 ```
 
-Augment simulated data for both time periods as in Table 2 and Table 3 of the supplementary material.
+### Similarity measure between the simulated and observed data
+
+To apply ABC, we use the following distance function for observed and simulated datasets.
+
+$$d(D_{obs}, D^*) = \cfrac{1}{2}\left(\|D_1−D^∗(q_{c1},q_{h1}) \|_F + \| D_2−D^∗(q_{c2},q_{h2}) \|_F \right) \, ,$$
+where 
+
+- $D_{obs} = D_1 \cup D_2$ with $D_1$ the 1977–1978 outbreak and $D_2$ the 1980–1981 outbreak datasets from Supplementary Table 2
+- $D^*$ is the simulated data
+- $\| \, \|_F$ denotes the Frobenius norm of a matrix defined by $\|A\|_F = \sqrt{\sum_{i,j}|a_{ij}|^2}$.
+
+The following code takes a matrix $A$ and returns its Frobenius norm.
 
 ```{r}
-# Function to generate augmented data matrix for two time periods
-generate_augmented_matrix <- function(q_c1, q_h1, q_c2, q_h2, max_sus1, max_sus2, n_households1, n_households2) {
-  # Generate w_js matrices for both households
-  w_js_matrix1 <- generate_wjs_matrix(q_c1, q_h1, max_sus1)
-  w_js_matrix2 <- generate_wjs_matrix(q_c2, q_h2, max_sus2)
-  data1 <- simulate_household_data(w_js_matrix1, max_sus1, n_households1)
-  data2 <- simulate_household_data(w_js_matrix2, max_sus2, n_households2)
-
-  # Combine matrices into an augmented matrix
-  nrow1 <- nrow(data1)
-  nrow2 <- nrow(data2)
-  max_rows <- max(nrow1, nrow2)
-
-  # Pad matrix1 with zeros if it has fewer rows
-  if (nrow1 < max_rows) {
-    data1 <- rbind(data1, matrix(0, nrow = max_rows - nrow1, ncol = ncol(data1)))
-  }
-
-  # Pad matrix2 with zeros if it has fewer rows
-  if (nrow2 < max_rows) {
-    data2 <- rbind(data2, matrix(0, nrow = max_rows - nrow2, ncol = ncol(data2)))
-  }
-
-  augmented_matrix <- cbind(data1, data2)
-
-  return(augmented_matrix)
+frobenius_norm <- function(A) {
+  sum_of_squares <- sum(A^2)  
+  return(sqrt(sum_of_squares))
 }
 ```
 
+Next we define the said distance function that takes two sets of observed data and two sets of simulated data using the pair of parameters $(q_{c1},q_{h1})$ and $(q_{c2},q_{h2})$. This function acts as ou similarity measure and returns the average Frobenius distance between the two pairs of observed and simulated data. 
 
 ```{r}
-# Example to check if the augmented_matrix function works.. (SIMILAR TO TABLE 2)
-
-# Parameters for the two households
-q_c1 <- 0.8
-q_h1 <- 0.6
-q_c2 <- 0.7
-q_h2 <- 0.5
-
-# Number of susceptibles for each household
-susceptibles1 <- 5 # Household 1
-susceptibles2 <- 5 # Household 2
-n_households1 <- c(79,105,48,44,11)
-n_households2 <- c(54,84,60,62,19)
-
-# Generate the augmented data matrix
-augmented_matrix <- generate_augmented_matrix(q_c1, q_h1, q_c2, q_h2, susceptibles1, susceptibles2,n_households1, n_households2)
-
-
-# Display the result
-print(augmented_matrix)
-
-```
-
-### Distance function using Frbenius norm
-
-```{r}
-# This cell contains the distance function described on page 107 of the paper.
-
-# This function makes use of the Frobenius norm.  So we define a function which takes the Frobenius norm.
-
-frobenius <- function(A){
-  double_sum = 0
-  for (j in 1:ncol(A)) {
-    for (s in 1:nrow(A)) {
-      if(!is.na(A[i,j])){
-        double_sum = double_sum + (A[i,j])^2
-      }
-    }
-  }
-  return(sqrt(double_sum))
-}
-
-# Below is a function which gives the distance. Some sanity checks still need to be added. For instance checking that the matrices input are the same size.
-
 distance <- function(given_data1, given_data2, simulated_data1, simulated_data2){
-  # Not sure if below subtraction will be upset with NA values
-  distance1 = frobenius(given_data1-simulated_data1)
-  distance2 = frobenius(given_data2-simulated_data2)
-  total_distance = .5(distance1+distance2)
+  distance1 = frobenius_norm(given_data1-simulated_data1)
+  distance2 = frobenius_norm(given_data2-simulated_data2)
+  total_distance = (distance1+distance2)/2
   return(total_distance)
 }
-
-
 ```
 
 
+```{r}
+# # This cell contains the distance function described on page 107 of the paper.
+# # 
+# # This function makes use of the Frobenius norm.  So we define a function which computes the Frobenius norm.
+# 
+# frobenius <- function(A){
+#   double_sum = 0
+#   for (j in 1:ncol(A)) {
+#     for (s in 1:nrow(A)) {
+#       if(!is.na(A[i,j])){
+#         double_sum = double_sum + (A[i,j])^2
+#       }
+#     }
+#   }
+#   return(sqrt(double_sum))
+# }
+# 
+# # Below is a function which gives the distance. Some sanity checks still need to be added. For instance checking that the matrices input are the same size.
+# 
+# distance <- function(given_data1, given_data2, simulated_data1, simulated_data2){
+#   # Not sure if below subtraction will be upset with NA values
+#   distance1 = frobenius(given_data1-simulated_data1)
+#   distance2 = frobenius(given_data2-simulated_data2)
+#   total_distance = .5(distance1+distance2)
+#   return(total_distance)
+# }
+```
 
+## Generating ABC samples
+
+The ABC algorithm for this project is given below.
+
+### ABC: The algorithm
+
+**Inputs:**
+
+- A 4-parameter vector: $q = (q_{c1}, q_{h1}, q_{c2}, q_{h2}) $
+- A target posterior: $P(q|D_{obs}) \propto P(D_{obs} | q)P(q)$
+- A way of simulating from $P(D_{obs}|q) \sim w_{js}$
+- A prior on the parameters: $P(q) \sim$ Uniform[0,1]
+- A similarity measure: $d(D_{obs}, D^*) = \cfrac{1}{2}\left(\|D_1−D^∗(q_{c1},q_{h1}) \|_F + \| D_2−D^∗(q_{c2},q_{h2}) \|_F \right)$ 
+- A tolerance $\epsilon$
+
+**Sampling:** for $i = 1, 2, \dots, N$
+
+- Generate $q^{(i)} \sim$ Uniform[0,1]
+- Generate $D^{*(i)} \sim  w_{js}$
+
+**Accept/Reject Criterion:**
+
+- If $d(D_{obs}, D^{*(i)}) < \epsilon$, accept $q^{(i)}$
+
+**Posterior Approximation:**
+
+- The accepted parameter values approximate the posterior distribution $P(q|D_{obs})$.
