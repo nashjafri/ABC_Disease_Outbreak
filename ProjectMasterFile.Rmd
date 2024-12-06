@@ -6,7 +6,205 @@ date: "2024-11-22"
 
 Here is an Rmd file for typing our code and final project writeup :)
 
-Test
+### Probability matrix w_js 
+
+
+```{r}
+# Function to compute w_js matrix for a given time period
+generate_wjs_matrix <- function(q_c, q_h, max_sus) {
+  
+  nCol <- max_sus            # Columns (Susceptibles) indexed by s = 1, 2, ..., max_sus
+  nRow <- max_sus + 1        # Rows (Infected) indexed by j = 0, 1, 2, ..., s
+  
+  # Initialize a (zero) matrix to store the probabilities w_js
+  w_js_matrix <- matrix(0, nrow = nRow , ncol = nCol)
+  
+  for (s in 1:nCol) {  # Iterate over number of susceptibles (1 to max_sus)
+    for (j in 0:s) {   # Iterate over number of infections (0 to s)
+      
+      if (j == 0) {    
+          w_js_matrix[j + 1,s] <- q_c^s  # j = 0 corresponds to row 1 of the w_js matrix
+      } else if (j < s) {              # j corresponds to row (j + 1) of the w_js matrix
+          w_js_matrix[j + 1, s] <- choose(s, j) * w_js_matrix[j + 1, j] * (q_c * q_h^j)^(s - j)
+      } else {                         # j = s corresponds to row (s + 1) of the w_js matrix
+          w_js_matrix[j + 1, s] <- 1 - sum(w_js_matrix[1:j,s])
+      }
+    }
+  }
+  
+  rownames(w_js_matrix) <- paste("j =", 0:max_sus)
+  colnames(w_js_matrix) <- paste("s =", 1:max_sus)
+  
+  return(w_js_matrix)
+}
+```
+
+
+```{r}
+# # Function to generate augmented data matrix for two households
+# generate_augmented_matrix <- function(q_c1, q_h1, q_c2, q_h2, max_sus1, max_sus2) {
+#   # Generate w_js matrices for both households
+#   matrix1 <- generate_wjs_matrix(q_c1, q_h1, max_sus1)
+#   matrix2 <- generate_wjs_matrix(q_c2, q_h2, max_sus2)
+#   
+#   # Combine matrices into an augmented matrix
+#   nrow1 <- nrow(matrix1)
+#   nrow2 <- nrow(matrix2)
+#   max_rows <- max(nrow1, nrow2)
+#   
+#   # Pad matrix1 with zeros if it has fewer rows
+#   if (nrow1 < max_rows) {
+#     matrix1 <- rbind(matrix1, matrix(0, nrow = max_rows - nrow1, ncol = ncol(matrix1)))
+#   }
+#   
+#   # Pad matrix2 with zeros if it has fewer rows
+#   if (nrow2 < max_rows) {
+#     matrix2 <- rbind(matrix2, matrix(0, nrow = max_rows - nrow2, ncol = ncol(matrix2)))
+#   }
+#   
+#   augmented_matrix <- cbind(matrix1, matrix2)
+#   
+#   return(augmented_matrix)
+# }
+```
+
+
+```{r}
+# # Example to check if the function works..
+# 
+# # Parameters for the two households
+# q_c1 <- 0.8
+# q_h1 <- 0.6
+# q_c2 <- 0.7
+# q_h2 <- 0.5
+# 
+# # Number of susceptibles for each household
+# susceptibles1 <- 5 # Household 1
+# susceptibles2 <- 4 # Household 2
+# 
+# # Generate the augmented data matrix
+# augmented_matrix <- generate_augmented_matrix(q_c1, q_h1, q_c2, q_h2, susceptibles1, susceptibles2)
+# 
+# 
+# # Display the result
+# print(augmented_matrix)
+
+```
+
+### Simulating data from the distribution w_js:
+
+```{r}
+simulate_household_data <- function(w_js_matrix, max_sus, n_households) {
+  
+  nCol <- max_sus            # Columns (Susceptibles) indexed by s = 1, 2, ..., max_sus
+  nRow <- max_sus + 1        # Rows (Infected) indexed by j = 0, 1, 2, ..., s
+  
+  # Initialize a (zero) matrix to store the simulated data
+  simulated_data <- matrix(0, nrow = nRow, ncol = nCol)
+  
+  for (s in 1:nCol) { # Iterate over number of susceptibles
+    # Probabilities for the current column (w_js for susceptibles = s)
+    probabilities <- w_js_matrix[1:(s + 1), s]       # Recall that (j+1) corresponds to row j of w_js_matrix
+    
+    # Note: probabilities <- w_js_matrix[, s] gives the same probabilities but of length max_sus, which creates problems in sampling
+    
+    # Simulate household infections using random sampling
+    samples <- sample(0:s, size = n_households[s], replace = TRUE, prob = probabilities)
+    
+    # Count the occurrences of each infection level
+    counts <- table(factor(samples, levels = 0:s))
+    
+    # Ensure counts align with simulated_data row indices
+    simulated_data[1:(s + 1), s] <- as.numeric(counts)
+  }
+  
+  rownames(simulated_data) <- paste("(Infected) j =", 0:max_sus)
+  colnames(simulated_data) <- paste("s =", 1:max_sus)
+  
+  return(simulated_data)
+}
+```
+
+
+Example of simulated data:
+
+**NOTE:** Need to modify the code below to take n_households to bethe same as observed data...
+
+```{r}
+# Parameters
+q_c <- 0.8                                    # Probability of avoiding community infection
+q_h <- 0.6                                    # Probability of escaping household infection
+susceptibles <- 5                             # Maximum number of susceptibles in a household
+n_households <- c(79,105,48,44,11)            # Number of households (same as observed data)
+
+# Generate the w_js matrix
+w_js_matrix <- generate_wjs_matrix(q_c, q_h, susceptibles)
+
+# Simulate household data
+simulated_data <- simulate_household_data(w_js_matrix, susceptibles, n_households)
+
+# Print the simulated table
+print(simulated_data)
+```
+
+Augment simulated data for both time periods as in Table 2 and Table 3 of the supplementary material.
+
+```{r}
+# Function to generate augmented data matrix for two time periods
+generate_augmented_matrix <- function(q_c1, q_h1, q_c2, q_h2, max_sus1, max_sus2, n_households1, n_households2) {
+  # Generate w_js matrices for both households
+  w_js_matrix1 <- generate_wjs_matrix(q_c1, q_h1, max_sus1)
+  w_js_matrix2 <- generate_wjs_matrix(q_c2, q_h2, max_sus2)
+  data1 <- simulate_household_data(w_js_matrix1, max_sus1, n_households1)
+  data2 <- simulate_household_data(w_js_matrix2, max_sus2, n_households2)
+
+  # Combine matrices into an augmented matrix
+  nrow1 <- nrow(data1)
+  nrow2 <- nrow(data2)
+  max_rows <- max(nrow1, nrow2)
+
+  # Pad matrix1 with zeros if it has fewer rows
+  if (nrow1 < max_rows) {
+    data1 <- rbind(data1, matrix(0, nrow = max_rows - nrow1, ncol = ncol(data1)))
+  }
+
+  # Pad matrix2 with zeros if it has fewer rows
+  if (nrow2 < max_rows) {
+    data2 <- rbind(data2, matrix(0, nrow = max_rows - nrow2, ncol = ncol(data2)))
+  }
+
+  augmented_matrix <- cbind(data1, data2)
+
+  return(augmented_matrix)
+}
+```
+
+
+```{r}
+# Example to check if the augmented_matrix function works.. (SIMILAR TO TABLE 2)
+
+# Parameters for the two households
+q_c1 <- 0.8
+q_h1 <- 0.6
+q_c2 <- 0.7
+q_h2 <- 0.5
+
+# Number of susceptibles for each household
+susceptibles1 <- 5 # Household 1
+susceptibles2 <- 5 # Household 2
+n_households1 <- c(79,105,48,44,11)
+n_households2 <- c(54,84,60,62,19)
+
+# Generate the augmented data matrix
+augmented_matrix <- generate_augmented_matrix(q_c1, q_h1, q_c2, q_h2, susceptibles1, susceptibles2,n_households1, n_households2)
+
+
+# Display the result
+print(augmented_matrix)
+
+```
+
+### Distance function using Frbenius norm
 
 ```{r}
 # This cell contains the distance function described on page 107 of the paper.
@@ -37,4 +235,6 @@ distance <- function(given_data1, given_data2, simulated_data1, simulated_data2)
 
 
 ```
+
+
 
