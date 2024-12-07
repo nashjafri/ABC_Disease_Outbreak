@@ -38,7 +38,7 @@ prior_distribution <- function() {
 
 ## Probability distribution $w_{js}$ (Likelihood)
 
-In the following code, we define a function that takes parameters $q_c$, $q_h$ and (maxmimum) household size, and returns the probability distribution matrix `w_js_matrix` with entries $w_{js}$ for $j = 0,1,\dots, s$, $s = 1 ,2, \dots,$household_size. This is done iteratively based on the formula $w_{js} = \binom{s}{j}w_{jj}(q_cq_h^j)^{s-j}$, $w_{0s} = q_c^s$ and $w_{ss} = 1 - \sum_{j = 0}^{s-1}w_{js}$.
+In the following code, we define a function that takes parameters $q_c$, $q_h$ and (maximum) household size, and returns the probability distribution matrix `w_js_matrix` with entries $w_{js}$ for $j = 0,1,\dots, s$, $s = 1 ,2, \dots,$household_size. This is done iteratively based on the formula $w_{js} = \binom{s}{j}w_{jj}(q_cq_h^j)^{s-j}$, $w_{0s} = q_c^s$ and $w_{ss} = 1 - \sum_{j = 0}^{s-1}w_{js}$.
 
 ```{r}
 # Function to compute w_js matrix for a given outbreak
@@ -147,7 +147,7 @@ We use the `sample` function to generate the samples, but the `rmultinom` functi
 q_c <- 0.8                                    # Probability of avoiding community infection
 q_h <- 0.6                                    # Probability of escaping household infection
 household_size <- 5                           # Maximum number of susceptible individuals in a household
-n_households <- c(79,105,48,44,11)            # Number of households (same as observed data in Table 2)
+n_households <- c(79, 105, 48, 44, 11)            # Number of households (same as observed data in Table 2)
 
 # Simulate household data
 simulated_data <- simulate_household_data(q_c, q_h, household_size, n_households)
@@ -170,10 +170,7 @@ where
 The following code takes a matrix $A$ and returns its Frobenius norm.
 
 ```{r}
-frobenius_norm <- function(A) {
-  sum_of_squares <- sum(A^2)  
-  return(sqrt(sum_of_squares))
-}
+frobenius_norm <- function(A) return(sqrt(sum(A^2)))
 ```
 
 Next we define the said distance function that takes two sets of observed data and two sets of simulated data using the pair of parameters $(q_{c1},q_{h1})$ and $(q_{c2},q_{h2})$. This function acts as ou similarity measure and returns the average Frobenius distance between the two pairs of observed and simulated data. 
@@ -187,35 +184,6 @@ distance <- function(given_data1, given_data2, simulated_data1, simulated_data2)
 }
 ```
 
-
-```{r}
-# # This cell contains the distance function described on page 107 of the paper.
-# # 
-# # This function makes use of the Frobenius norm.  So we define a function which computes the Frobenius norm.
-# 
-# frobenius <- function(A){
-#   double_sum = 0
-#   for (j in 1:ncol(A)) {
-#     for (s in 1:nrow(A)) {
-#       if(!is.na(A[i,j])){
-#         double_sum = double_sum + (A[i,j])^2
-#       }
-#     }
-#   }
-#   return(sqrt(double_sum))
-# }
-# 
-# # Below is a function which gives the distance. Some sanity checks still need to be added. For instance checking that the matrices input are the same size.
-# 
-# distance <- function(given_data1, given_data2, simulated_data1, simulated_data2){
-#   # Not sure if below subtraction will be upset with NA values
-#   distance1 = frobenius(given_data1-simulated_data1)
-#   distance2 = frobenius(given_data2-simulated_data2)
-#   total_distance = .5(distance1+distance2)
-#   return(total_distance)
-# }
-```
-
 ## Generating ABC samples
 
 The ABC algorithm for this project is given below.
@@ -224,29 +192,29 @@ The ABC algorithm for this project is given below.
 
 **Inputs:**
 
-- A 4-parameter vector: $q = (q_{c1}, q_{h1}, q_{c2}, q_{h2}) $
-- A target posterior: $P(q|D_{obs}) \propto P(D_{obs} | q)P(q)$
-- A way of simulating from $P(D_{obs}|q) \sim w_{js}$
-- A prior on the parameters: $P(q) \sim$ Uniform[0,1]
-- A similarity measure: $d(D_{obs}, D^*) = \cfrac{1}{2}\left(\|D_1−D^∗(q_{c1},q_{h1}) \|_F + \| D_2−D^∗(q_{c2},q_{h2}) \|_F \right)$ 
-- A tolerance $\epsilon$
+- 4-parameter vector: $ q = ( q_{c1}, q_{h1}, q_{c2}, q_{h2} ) $
+- Target posterior: $ P(q|D_{obs}) \propto P(D_{obs} | q)P(q) $
+- A way of simulating from $ P(D_{obs}|q) \sim w_{js} $
+- Prior on the parameters: $ P(q) \sim $ Uniform[0,1]
+- Similarity measure: $ d(D_{obs}, D^*) = \cfrac{1}{2}\left(\|D_1−D^∗(q_{c1},q_{h1}) \|_F + \|D_2−D^∗(q_{c2},q_{h2}) \|_F \right) $ 
+- Tolerance $ \epsilon $
 
-**Sampling:** for $i = 1, 2, \dots, N$
+**Sampling:** for $ i = 1, 2, \dots, N $
 
-- Generate $q^{(i)} \sim$ Uniform[0,1]
-- Generate $D^{*(i)} \sim  w_{js}$
+- Generate $ q^{(i)} \sim $ Uniform[0,1]
+- Generate $ D^{*(i)} \sim  w_{js} $
 
 **Accept/Reject Criterion:**
 
-- If $d(D_{obs}, D^{*(i)}) < \epsilon$, accept $q^{(i)}$
+- If $ d(D_{obs}, D^{*(i)}) < \epsilon $, accept $ q^{(i)} $, else reject.
 
 **Posterior Approximation:**
 
-- The accepted parameter values approximate the posterior distribution $P(q|D_{obs})$.
+- The accepted parameter values approximate the posterior distribution $ P(q|D_{obs}) $.
 
 ### Function to generate posterior samples
 
-Next we generate posterior samples by defining a function that takes the pair of observed data (given_data1, given_data2), a similarity measure (distance), a prior distribution for the parameter, a data simulating function and a tolerance level. This function returns a posterior sample of the parameter q (in our case, the 4-parameter vector $(q_{c1}, q_{h1}, q_{c2}, q_{h2}) $) that satisfies the tolerance condition for the distance between simulated and given data.  
+Next we generate posterior samples by defining a function that takes the pair of observed data (given_data1, given_data2), a similarity measure (distance), a prior distribution for the parameter, a data simulating function and a tolerance level. This function returns a posterior sample of the parameter q (in our case, the 4-parameter vector $ (q_{c1}, q_{h1}, q_{c2}, q_{h2}) $) that satisfies the tolerance condition for the distance between simulated and given data.  
 
 ```{r}
 generate_abc_sample <- function(given_data1, given_data2,
@@ -324,13 +292,13 @@ generate_abc_sample(given_data1 = given_data1, given_data2 = given_data2,
 **TOOK ~ 19 SECONDS FOR EPSILON = 15**
 
 ```{r}
-system.time(
-generate_abc_sample(given_data1 = given_data1, given_data2 = given_data2,
-                                distance = distance,
-                                prior_distribution = prior_distribution,
-                                data_simulating_function = simulate_household_data,
-                                epsilon = 15)
-)
+# system.time(
+# generate_abc_sample(given_data1 = given_data1, given_data2 = given_data2,
+#                                 distance = distance,
+#                                 prior_distribution = prior_distribution,
+#                                 data_simulating_function = simulate_household_data,
+#                                 epsilon = 10)
+# )
 ```
 
 ```{r}
@@ -340,24 +308,56 @@ posterior_samples <- replicate(n = 100,
                                 distance = distance,
                                 prior_distribution = prior_distribution,
                                 data_simulating_function = simulate_household_data,
-                                epsilon = 50))
+                                epsilon = 15))
 ```
 
+```{r}
+# Extracting samples of parameters q_c1, q_h1, q_c2, q_h2 from the posterior samples
+q_c1 <- posterior_samples[1, ]  # First row for q_c1
+q_h1 <- posterior_samples[2, ]  # Second row for q_h1
+q_c2 <- posterior_samples[3, ]  # Third row for q_c2
+q_h2 <- posterior_samples[4, ]  # Fourth row for q_h2
+```
 
 ```{r}
-system.time(replicate(n = 100,
-    generate_abc_sample(given_data1 = given_data1, given_data2 = given_data2,
-                                distance = distance,
-                                prior_distribution = prior_distribution,
-                                data_simulating_function = simulate_household_data,
-                                epsilon = 50))
-)
+# Recreate Figure 3(a) with n = 100 posterior samples and epsilon = 15
+
+par(pty = "s")      # Set the aspect ratio to 1:1, ensuring the plot is square ("s")
+
+plot(q_h1, q_c1, 
+     main = "q_h vs q_c (n = 100, epsilon = 15)", 
+     xlab = "q_h", ylab = "q_c", 
+     xlim = c(0, 1), ylim = c(0, 1), 
+     pch = 16, col = "red", 
+     cex = 1.5)  
+
+# Add second set of data (q_h2, q_c2) in blue
+points(q_h2, q_c2, pch = 16, col = "blue", cex = 1.2)
+
+# Add a legend
+legend("bottomleft", 
+       legend = c("given_data1 from Table 2", "given_data2 from Table 2"), 
+       col = c("red", "blue"), 
+       pch = 16, bty = "n")
+```
+
+```{r}
+# system.time(replicate(n = 100,
+#     generate_abc_sample(given_data1 = given_data1, given_data2 = given_data2,
+#                                 distance = distance,
+#                                 prior_distribution = prior_distribution,
+#                                 data_simulating_function = simulate_household_data,
+#                                 epsilon = 50))
+# )
 ```
 
 
 # Bibliography
 
 [1] Toni T, Stumpf M.P.H. Simulation-based model selection for dynamical systems in systems and population biology. Bioinformatics, 104–110, 2010.
+
 [2] Toni T, Stumpf M.P.H. Supplementary figures and datasets to [1]. 
+
 [3] Addy C, Jr IL and Haber M. A generalized stochastic model for the analysis of infectious disease final size data. Biometrics, 961–974, 1991.
+
 [4] Jr IL and Koopman J. Household and community transmission parameters from final distribu- tions of infections in households. Biometrics, 115–126, 1982.
