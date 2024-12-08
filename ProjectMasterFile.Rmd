@@ -107,40 +107,9 @@ simulate_household_data <- function(q_c, q_h, household_size, n_households) {
 }
 ```
 
-We use the `sample` function to generate the samples, but the `rmultinom` function can also be used for the same purpose. The corresponding code for producing simulations using `rmultinom` is commented out below, but can be used if preferred. 
+We use the `sample` function to generate the samples, but the `rmultinom` function can also be used for the same purpose. 
 
-```{r}
-# # Function to simulate household data using the multinomial distribution
-# simulate_household_data_multinomial <- function(q_c, q_h, household_size, n_households) {
-# 
-#   w_js_matrix <- W_js_matrix(q_c, q_h, household_size)
-# 
-#   nCol <- household_size            # Columns (susceptible individuals) indexed by s = 1, 2, ..., household_size
-#   nRow <- household_size + 1        # Rows (infected individuals) indexed by j = 0, 1, 2, ..., s
-# 
-#   # Initialize a (zero) matrix to store the simulated data
-#   simulated_data <- matrix(0, nrow = nRow, ncol = nCol)
-# 
-#   for (s in 1:nCol) { # Iterate over number of susceptible individuals in a household
-# 
-#     # Probabilities for the current column
-#     probabilities <- w_js_matrix[1:(s + 1), s]   # Get the w_js probabilities for current s (susceptibles)
-# 
-#     # Simulate the counts of households with j infections using the multinomial distribution
-#     household_counts <- rmultinom(1, n_households[s], probabilities)
-# 
-#     # Store the simulated counts in the matrix
-#     simulated_data[1:(s + 1), s] <- household_counts
-#   }
-# 
-#   rownames(simulated_data) <- paste("(Infected) j =", 0:household_size)
-#   colnames(simulated_data) <- paste("s =", 1:household_size)
-# 
-#   return(simulated_data)
-# }
-```
-
-**Example:** The following is an example of simulated data, given parameters $q_c = 0.8$, $q_h = 0.6$, maximum household size of 5 and number of households same as in Table 2:
+**Example:** The following is an example of one simulated dataset, given parameters $q_c = 0.8$, $q_h = 0.6$, maximum household size of 5 and number of households same as in Table 2:
 
 ```{r}
 # Parameters
@@ -155,7 +124,6 @@ simulated_data <- simulate_household_data(q_c, q_h, household_size, n_households
 # Print the simulated table
 print(simulated_data)
 ```
-
 ### Similarity measure between the simulated and observed data
 
 To apply ABC, we use the following distance function for observed and simulated datasets.
@@ -188,33 +156,34 @@ distance <- function(given_data1, given_data2, simulated_data1, simulated_data2)
 
 The ABC algorithm for this project is given below.
 
-### ABC: The algorithm
+### ABC: The Algorithm
 
 **Inputs:**
 
-- 4-parameter vector: $ q = ( q_{c1}, q_{h1}, q_{c2}, q_{h2} ) $
-- Target posterior: $ P(q|D_{obs}) \propto P(D_{obs} | q)P(q) $
-- A way of simulating from $ P(D_{obs}|q) \sim w_{js} $
-- Prior on the parameters: $ P(q) \sim $ Uniform[0,1]
-- Similarity measure: $ d(D_{obs}, D^*) = \cfrac{1}{2}\left(\|D_1−D^∗(q_{c1},q_{h1}) \|_F + \|D_2−D^∗(q_{c2},q_{h2}) \|_F \right) $ 
-- Tolerance $ \epsilon $
+* 4-parameter vector: $q = (q_{c1}, q_{h1}, q_{c2}, q_{h2})$
+* Target posterior: $P(q|D_{obs}) \propto P(D_{obs} | q)P(q)$
+* A way of simulating from $P(D_{obs}|q) \sim w_{js}$
+* Prior on the parameters: $P(q) \sim \text{Uniform}[0,1]$
+* Similarity measure: $
+  d(D_{obs}, D^*) = \frac{1}{2} \left( \| D_1 - D^*(q_{c1}, q_{h1}) \|_F + \| D_2 - D^*(q_{c2}, q_{h2}) \|_F \right)$
+* Tolerance $\epsilon$
 
-**Sampling:** for $ i = 1, 2, \dots, N $
+**Sampling:** for $i = 1, 2, \dots, N$
 
-- Generate $ q^{(i)} \sim $ Uniform[0,1]
-- Generate $ D^{*(i)} \sim  w_{js} $
+* Generate $q^{(i)} \sim \text{Uniform}[0,1]$
+* Generate $D^{*(i)} \sim w_{js}$
 
 **Accept/Reject Criterion:**
 
-- If $ d(D_{obs}, D^{*(i)}) < \epsilon $, accept $ q^{(i)} $, else reject.
+* If $d(D_{obs}, D^{*(i)}) < \epsilon$, accept $q^{(i)}$, else reject.
 
 **Posterior Approximation:**
 
-- The accepted parameter values approximate the posterior distribution $ P(q|D_{obs}) $.
+* The accepted parameter values approximate the posterior distribution $P(q|D_{obs})$.
 
-### Function to generate posterior samples
+### Function to Generate Posterior Samples
 
-Next we generate posterior samples by defining a function that takes the pair of observed data (given_data1, given_data2), a similarity measure (distance), a prior distribution for the parameter, a data simulating function and a tolerance level. This function returns a posterior sample of the parameter q (in our case, the 4-parameter vector $ (q_{c1}, q_{h1}, q_{c2}, q_{h2}) $) that satisfies the tolerance condition for the distance between simulated and given data.  
+Next, we generate posterior samples by defining a function that takes the pair of observed data ($\text{given_data1}$, $\text{given_data2}$), a similarity measure ($\text{distance}$), a prior distribution for the parameter, a data-simulating function, and a tolerance level. This function returns a posterior sample of the parameter $q$ (in our case, the 4-parameter vector $(q_{c1}, q_{h1}, q_{c2}, q_{h2})$) that satisfies the tolerance condition for the distance between simulated and given data.
 
 ```{r}
 generate_abc_sample <- function(given_data1, given_data2,
@@ -251,8 +220,8 @@ generate_abc_sample <- function(given_data1, given_data2,
 
 The following code stores the observed data from Table 2 of the Supplementary Material. 
 
-- given_data1: The first dataset represents Influenza A (H3N2) infection in 1977-78 Tecumseh, Michigan. [3]
-- given_data2: The second dataset represents Influenza A (H3N2) infection in 1980-81 Tecumseh, Michigan. [3]  
+- given_data1: The first dataset represents Influenza A (H3N2) infection in 1977-78, Tecumseh, Michigan. [3]
+- given_data2: The second dataset represents Influenza A (H3N2) infection in 1980-81, Tecumseh, Michigan. [3]  
 
 ```{r}
 given_data1 <- matrix(c(66, 87, 25, 22, 4,
@@ -273,9 +242,13 @@ given_data2 <- matrix(c(44, 62, 47, 38, 9,
 
 ## Applying ABC to get posterior samples from Observed Data from Table 2
 
-Now we are ready to apply our ABC sample generating function to get posterior samples for $(q_{c1}, q_{h1}, q_{c2}, q_{h2})$.
+### Note about tolerance level $\epsilon$ 
 
-**TAKING TOO LONG FOR EVEN EPSILON = 10, RUNS FAST FOR EPSILON > 20**
+Before applying ABC to get sample parameters, we make a small note about what is considered a reasonable tolerance level. Our datasets represent counts of households with $s$ susceptible and $j$ infected individuals, structured as a 6×5 matrix. **By design, these counts are always integers**. Notably, 10 entries in each dataset are fixed to zero, corresponding to cases where $j>s$. The remaining 20 entries are randomly generated using the simulate_household_data function.
+
+Since both observed data and simulated data are 6×5 matrices with integer entries, and 10 of the entries are always zero, the Frobenius distance can be sensitive to small differences. For instance, if all of the remaining 20 entries are identical except one, the Frobenius distance is 1. Similarly, if 5 of the 20 entries are identical and remaining 15 differ by only 1, the Frobenius distance becomes 15. This scale justifies setting $\epsilon = 15$ as a reasonable threshold, which is what we use to generate the posteriors.
+
+Now we are ready to apply our ABC sample generating function to get posterior samples for $(q_{c1}, q_{h1}, q_{c2}, q_{h2})$.
 
 ```{r}
 prior_distribution <- function() runif(n = 4, min = 0, max = 1)     
@@ -289,7 +262,7 @@ generate_abc_sample(given_data1 = given_data1, given_data2 = given_data2,
                                 epsilon = 15)
 ```
 
-**TOOK ~ 19 SECONDS FOR EPSILON = 15**
+In general, we noted that it takes about 20-30 seconds in RStudio to generate one posterior sample with $\epsilon = 15$. Whereas it takes about 49-60 minutes in Google Colab (using T4 GPU) to generate one with $\epsilon = 10$.
 
 ```{r}
 # system.time(
@@ -301,8 +274,16 @@ generate_abc_sample(given_data1 = given_data1, given_data2 = given_data2,
 # )
 ```
 
-```{r}
-# Generating N posterior samples
+The code below produces 100 parameter samples that are accepted by the algorithm with $\epsilon = 15$. This is a computationally expensive process and took about 2 hours to run on RStudio.
+
+```{r, include=FALSE, echo = FALSE, results='hide'}
+# DO NOT RUN THE CELL BELOW THIS ONE!
+# It will take forever. Have already run it and saved the output as RDS to access it again.
+# Otherwise it creates problems in knitting and tries to draw samples again.  
+```
+
+```{r long-computation, eval=FALSE}
+# Generating 100 posterior samples
 posterior_samples <- replicate(n = 100,
     generate_abc_sample(given_data1 = given_data1, given_data2 = given_data2,
                                 distance = distance,
@@ -310,6 +291,21 @@ posterior_samples <- replicate(n = 100,
                                 data_simulating_function = simulate_household_data,
                                 epsilon = 15))
 ```
+
+
+```{r, include=FALSE, echo = FALSE, results='hide'}
+# Save posterior_samples_Table2.rds on your local machine (from Drive) before running this
+# saveRDS(posterior_samples, "posterior_samples_Table2.rds")
+posterior_samples <- readRDS("posterior_samples_Table2.rds")
+```
+
+Here are a few posterior samples from the 100 generated above.
+
+```{r}
+posterior_samples[, 95:100]
+```
+
+We now extract individual parameters $q_{c1}$, $q_{h1}$, $q_{c2}$ and $q_{h2}$ from the samples. 
 
 ```{r}
 # Extracting samples of parameters q_c1, q_h1, q_c2, q_h2 from the posterior samples
@@ -319,10 +315,13 @@ q_c2 <- posterior_samples[3, ]  # Third row for q_c2
 q_h2 <- posterior_samples[4, ]  # Fourth row for q_h2
 ```
 
-```{r}
+Finally, we plot the simulated parameters $q_h$ vs $q_c$ for the two outbreaks. This recreates Figure 3(a) from [Toni and Stumpf (2010)](https://watermark.silverchair.com/bioinformatics_26_1_104.pdf?token=AQECAHi208BE49Ooan9kkhW_Ercy7Dm3ZL_9Cf3qfKAc485ysgAAA3swggN3BgkqhkiG9w0BBwagggNoMIIDZAIBADCCA10GCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMjV15kHzFknWstbVZAgEQgIIDLvGZcFAgMxJ2FtxTGrsPvkAoO-imsFvwyY2RJRbPWpz_WYOR3ZYIIXnJpmCp_pOOlhB9fGwvPCCBNkFN7jjQvo-jtSs3vYGT9U9ABO1ngcGxGq0M_-xfz5QDNcfLJpdHphXjvXPmNQKw-FbmW7Z-lM4VADhWgRMXeAa69IcQWbf3O3M4YVlAfOhNibTRLt8QLpayutZlbZAwX6aC2a13wmjnKF6Vx3WJWazbewssqJov9CmNXprFKUqnhcq1QLZ4oaGSKYaxVFpmwB2ZylzUBbliQ3fYN6VRAfleLXrmyvOymid2GtXNnhrslyx6SN2OSgbXU0YIgfSgCk5OaCETsFY7VMGzLCuUTB776n6hDJKcZ-Hb7RelIJxLeOZteaxRVOiu-a9pG5NbQQuueQtS0C-kqHlVksEwUAucqzS9UXX3ucvmsIgYK-jQQ8jmtqPTjVkdFGhR1J3LzOw7VJCJQy4b_a_WZLDNS7bskxvvZgU7DOZAVHxYu1aPUHh3UaeJ-5oMwJ-sqFWg_6ZruUPk4L9f1KB1siRgSmxw-Eo4JHKXjSEsIXAylD3m_trgxEIxkeqgXFJ867U-qJxeG39ToS9BptAG_IGK-HfMD0ovPK9mKHXvrp32fRO5S0oiqaCMa8kV4DGwbZjaMArJDV9Ps3WNw_EE2E8m7J4UjiqLNQkihUtUM6d4xmJ-S4zo-qPJkr0ajWkDhQwkeJ1wsaYGXItivcoAB4lzyQmG3Zs5kQQIIa2m4hveEf2mDlglHMoPHTAN5hGG-9_LegexhFcKAZTguF4nNpozqAVsIQaj8DeAaHWY8AvjP5HjDTgYHs4ni3w7EjULGDSroFhBndTpCAMNjtY9yIqoh248Bf7ayWtBCXUx1yJyIamAPGeHej3nPnf80TACr2Of6fJicQ-hFcdVGzQj8qiq8b9GuOFFJ43SnZudftdAwwlA0mQb30ZhvgJvsYngGY752-NegVEd2F_r6N2Jkw-G-fzEnoObf6OXzGaYlNSq4_s4vGnQ38HGe_HPk7fdDIESUA35j1SbK5K83274IWvReND0Byubb2MmgZ4fJ90sCCKnjLeu9ho) using the Supplementary data in Table 2. As in the original paper, we use \textcolor{red}{red} for the 1977 outbreak ($q_{h1}, q_{c1}$) and \textcolor{blue}{blue} for the 1980 outbreak ($q_{h2}, q_{c2}$).
+
+
+```{r, cache=TRUE}
 # Recreate Figure 3(a) with n = 100 posterior samples and epsilon = 15
 
-par(pty = "s")      # Set the aspect ratio to 1:1, ensuring the plot is square ("s")
+par(pty = "s")      
 
 plot(q_h1, q_c1, 
      main = "q_h vs q_c (n = 100, epsilon = 15)", 
@@ -341,16 +340,111 @@ legend("bottomleft",
        pch = 16, bty = "n")
 ```
 
+## Observed Data (Table 3)
+
+The following code stores the observed data from Table 3 of the Supplementary Material. 
+
+- given_data3: The first dataset represents Influenza B infection in 1975-76, Seattle, Washington. [4]
+- given_data4: The second dataset represents Influenza A (H1N1) infection in 1978-79, Seattle, Washington. [4]  
+
 ```{r}
-# system.time(replicate(n = 100,
-#     generate_abc_sample(given_data1 = given_data1, given_data2 = given_data2,
-#                                 distance = distance,
-#                                 prior_distribution = prior_distribution,
-#                                 data_simulating_function = simulate_household_data,
-#                                 epsilon = 50))
-# )
+given_data3 <- matrix(c(9, 12, 18, 9, 4,
+                        1, 6, 6, 4, 3,
+                        0, 2, 3, 4, 0,
+                        0, 0, 1, 3, 2,
+                        0, 0, 0, 0, 0, 
+                        0, 0, 0, 0, 0), byrow = TRUE, ncol=5)
+
+given_data4 <- matrix(c(15, 12, 4,
+                        11, 17, 4,
+                        0, 21, 4,
+                        0, 0, 5 ), byrow = TRUE, ncol=3)
+
 ```
 
+## Applying ABC to get posterior samples from Observed Data from Table 3
+
+As with data from Table 2, we now apply our sample generating function to get posterior samples for $(q_{c3}, q_{h3}, q_{c4}, q_{h4})$. Since the given data in Table 3 is smaller than the one in Table 2, we are able to choose a smaller $\epsilon$ and still be within computational limits. We use $\epsilon = 7$ as a reasonable tolerance level.
+
+```{r}
+prior_distribution <- function() runif(n = 4, min = 0, max = 1)     
+
+# Generating one posterior sample 
+
+generate_abc_sample(given_data3, given_data4, distance, 
+                    prior_distribution, simulate_household_data, epsilon = 7)
+```
+
+$\epsilon = 6$ takes about 15-30 seconds per simulation. It would not be computationally feasible to draw 100 samples satisfying such a strict acceptance condition.
+
+```{r}
+system.time(generate_abc_sample(given_data3, given_data4, distance, 
+                    prior_distribution, simulate_household_data, epsilon = 6)
+)
+```
+
+The code below produces 100 parameter samples that are accepted by the algorithm with $\epsilon = 7$.
+
+```{r, include=FALSE, echo = FALSE, results='hide'}
+# DO NOT RUN THE CELL BELOW THIS ONE!
+# It will take forever. Have already run it and saved the output as RDS to access it again.
+# Otherwise it creates problems in knitting and tries to draw samples again.  
+```
+
+```{r long-computation-2, eval=FALSE}
+# Generating 100 posterior samples
+posterior_samples2 <- replicate(n = 100,
+    generate_abc_sample(given_data3, given_data4, distance, 
+                        prior_distribution, simulate_household_data, epsilon = 7))
+```
+
+
+```{r, include=FALSE, echo = FALSE, results='hide'}
+# Save posterior_samples_Table3.rds on your local machine (from Drive) before running this
+# saveRDS(posterior_samples2, "posterior_samples_Table3.rds")
+ posterior_samples2 <- readRDS("posterior_samples_Table3.rds")
+```
+
+Here are a few posterior samples from the 100 generated above.
+
+```{r}
+posterior_samples2[, 95:100]
+```
+
+We now extract individual parameters $q_{c3}$, $q_{h3}$, $q_{c4}$ and $q_{h4}$ from the samples. 
+
+```{r}
+# Extracting samples of parameters q_c3, q_h3, q_c4, q_h4 from the posterior samples
+q_c3 <- posterior_samples2[1, ]  # First row for q_c3
+q_h3 <- posterior_samples2[2, ]  # Second row for q_h3
+q_c4 <- posterior_samples2[3, ]  # Third row for q_c4
+q_h4 <- posterior_samples2[4, ]  # Fourth row for q_h4
+```
+
+Finally, we plot the simulated parameters $q_h$ vs $q_c$ for the two outbreaks. This recreates Figure 3(b) from [Toni and Stumpf (2010)](https://watermark.silverchair.com/bioinformatics_26_1_104.pdf?token=AQECAHi208BE49Ooan9kkhW_Ercy7Dm3ZL_9Cf3qfKAc485ysgAAA3swggN3BgkqhkiG9w0BBwagggNoMIIDZAIBADCCA10GCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMjV15kHzFknWstbVZAgEQgIIDLvGZcFAgMxJ2FtxTGrsPvkAoO-imsFvwyY2RJRbPWpz_WYOR3ZYIIXnJpmCp_pOOlhB9fGwvPCCBNkFN7jjQvo-jtSs3vYGT9U9ABO1ngcGxGq0M_-xfz5QDNcfLJpdHphXjvXPmNQKw-FbmW7Z-lM4VADhWgRMXeAa69IcQWbf3O3M4YVlAfOhNibTRLt8QLpayutZlbZAwX6aC2a13wmjnKF6Vx3WJWazbewssqJov9CmNXprFKUqnhcq1QLZ4oaGSKYaxVFpmwB2ZylzUBbliQ3fYN6VRAfleLXrmyvOymid2GtXNnhrslyx6SN2OSgbXU0YIgfSgCk5OaCETsFY7VMGzLCuUTB776n6hDJKcZ-Hb7RelIJxLeOZteaxRVOiu-a9pG5NbQQuueQtS0C-kqHlVksEwUAucqzS9UXX3ucvmsIgYK-jQQ8jmtqPTjVkdFGhR1J3LzOw7VJCJQy4b_a_WZLDNS7bskxvvZgU7DOZAVHxYu1aPUHh3UaeJ-5oMwJ-sqFWg_6ZruUPk4L9f1KB1siRgSmxw-Eo4JHKXjSEsIXAylD3m_trgxEIxkeqgXFJ867U-qJxeG39ToS9BptAG_IGK-HfMD0ovPK9mKHXvrp32fRO5S0oiqaCMa8kV4DGwbZjaMArJDV9Ps3WNw_EE2E8m7J4UjiqLNQkihUtUM6d4xmJ-S4zo-qPJkr0ajWkDhQwkeJ1wsaYGXItivcoAB4lzyQmG3Zs5kQQIIa2m4hveEf2mDlglHMoPHTAN5hGG-9_LegexhFcKAZTguF4nNpozqAVsIQaj8DeAaHWY8AvjP5HjDTgYHs4ni3w7EjULGDSroFhBndTpCAMNjtY9yIqoh248Bf7ayWtBCXUx1yJyIamAPGeHej3nPnf80TACr2Of6fJicQ-hFcdVGzQj8qiq8b9GuOFFJ43SnZudftdAwwlA0mQb30ZhvgJvsYngGY752-NegVEd2F_r6N2Jkw-G-fzEnoObf6OXzGaYlNSq4_s4vGnQ38HGe_HPk7fdDIESUA35j1SbK5K83274IWvReND0Byubb2MmgZ4fJ90sCCKnjLeu9ho) using the Supplementary data in Table 3. As in the original paper, we use \textcolor{red}{red} for the 1975 outbreak ($q_{h3}, q_{c3}$) and \textcolor{blue}{blue} for the 1978 outbreak ($q_{h4}, q_{c4}$).
+
+
+```{r, cache=TRUE}
+# Recreate Figure 3(b) with n = 100 posterior samples and epsilon = 8
+
+par(pty = "s")      
+
+plot(q_h3, q_c3, 
+     main = "q_h vs q_c (n = 100, epsilon = 7)", 
+     xlab = "q_h", ylab = "q_c", 
+     xlim = c(0, 1), ylim = c(0, 1), 
+     pch = 16, col = "red", 
+     cex = 1.5)  
+
+# Add second set of data (q_h4, q_c4) in blue
+points(q_h4, q_c4, pch = 16, col = "blue", cex = 1.2)
+
+# Add a legend
+legend("bottomleft", 
+       legend = c("given_data3 from Table 3", "given_data4 from Table 3"), 
+       col = c("red", "blue"), 
+       pch = 16, bty = "n")
+```
 
 # Bibliography
 
