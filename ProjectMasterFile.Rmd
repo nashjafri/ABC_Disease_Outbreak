@@ -10,7 +10,7 @@ output: html_document
 
 In this project, we apply ABC to fit parameters in a model for influenza A and B strains, based on data from past outbreaks in Michigan and Seattle. The process involves drawing parameters from prior uniform distribution, simulating data based on those parameters, computing a similarity measure between simulated and observed data, and iteratively refining the parameter estimates. 
 
-**Objective*:* The objective of this project is to replicate the model selection results presented in Section 3.3 of Tony and Stumpf's paper, "[Simulation-based model selection for dynamical systems in systems and population biology](https://watermark.silverchair.com/bioinformatics_26_1_104.pdf?token=AQECAHi208BE49Ooan9kkhW_Ercy7Dm3ZL_9Cf3qfKAc485ysgAAA3swggN3BgkqhkiG9w0BBwagggNoMIIDZAIBADCCA10GCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMjV15kHzFknWstbVZAgEQgIIDLvGZcFAgMxJ2FtxTGrsPvkAoO-imsFvwyY2RJRbPWpz_WYOR3ZYIIXnJpmCp_pOOlhB9fGwvPCCBNkFN7jjQvo-jtSs3vYGT9U9ABO1ngcGxGq0M_-xfz5QDNcfLJpdHphXjvXPmNQKw-FbmW7Z-lM4VADhWgRMXeAa69IcQWbf3O3M4YVlAfOhNibTRLt8QLpayutZlbZAwX6aC2a13wmjnKF6Vx3WJWazbewssqJov9CmNXprFKUqnhcq1QLZ4oaGSKYaxVFpmwB2ZylzUBbliQ3fYN6VRAfleLXrmyvOymid2GtXNnhrslyx6SN2OSgbXU0YIgfSgCk5OaCETsFY7VMGzLCuUTB776n6hDJKcZ-Hb7RelIJxLeOZteaxRVOiu-a9pG5NbQQuueQtS0C-kqHlVksEwUAucqzS9UXX3ucvmsIgYK-jQQ8jmtqPTjVkdFGhR1J3LzOw7VJCJQy4b_a_WZLDNS7bskxvvZgU7DOZAVHxYu1aPUHh3UaeJ-5oMwJ-sqFWg_6ZruUPk4L9f1KB1siRgSmxw-Eo4JHKXjSEsIXAylD3m_trgxEIxkeqgXFJ867U-qJxeG39ToS9BptAG_IGK-HfMD0ovPK9mKHXvrp32fRO5S0oiqaCMa8kV4DGwbZjaMArJDV9Ps3WNw_EE2E8m7J4UjiqLNQkihUtUM6d4xmJ-S4zo-qPJkr0ajWkDhQwkeJ1wsaYGXItivcoAB4lzyQmG3Zs5kQQIIa2m4hveEf2mDlglHMoPHTAN5hGG-9_LegexhFcKAZTguF4nNpozqAVsIQaj8DeAaHWY8AvjP5HjDTgYHs4ni3w7EjULGDSroFhBndTpCAMNjtY9yIqoh248Bf7ayWtBCXUx1yJyIamAPGeHej3nPnf80TACr2Of6fJicQ-hFcdVGzQj8qiq8b9GuOFFJ43SnZudftdAwwlA0mQb30ZhvgJvsYngGY752-NegVEd2F_r6N2Jkw-G-fzEnoObf6OXzGaYlNSq4_s4vGnQ38HGe_HPk7fdDIESUA35j1SbK5K83274IWvReND0Byubb2MmgZ4fJ90sCCKnjLeu9ho)" and demonstrate how ABC can be used to estimate model parameters for complex epidemic models. In particular, we recreate Figures 3(a) and 3(c) using a 4 parameter model on two sets of observed data - Table 2 (Addy et al., 1991) and Table 3 (Longini and Koopman, 1982) from the [Supplementary Data](https://academic.oup.com/bioinformatics/article/26/1/104/182571).
+**Objective**: The objective of this project is to replicate the model selection results presented in Section 3.3 of Tony and Stumpf's paper, "[Simulation-based model selection for dynamical systems in systems and population biology](https://watermark.silverchair.com/bioinformatics_26_1_104.pdf?token=AQECAHi208BE49Ooan9kkhW_Ercy7Dm3ZL_9Cf3qfKAc485ysgAAA3swggN3BgkqhkiG9w0BBwagggNoMIIDZAIBADCCA10GCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMjV15kHzFknWstbVZAgEQgIIDLvGZcFAgMxJ2FtxTGrsPvkAoO-imsFvwyY2RJRbPWpz_WYOR3ZYIIXnJpmCp_pOOlhB9fGwvPCCBNkFN7jjQvo-jtSs3vYGT9U9ABO1ngcGxGq0M_-xfz5QDNcfLJpdHphXjvXPmNQKw-FbmW7Z-lM4VADhWgRMXeAa69IcQWbf3O3M4YVlAfOhNibTRLt8QLpayutZlbZAwX6aC2a13wmjnKF6Vx3WJWazbewssqJov9CmNXprFKUqnhcq1QLZ4oaGSKYaxVFpmwB2ZylzUBbliQ3fYN6VRAfleLXrmyvOymid2GtXNnhrslyx6SN2OSgbXU0YIgfSgCk5OaCETsFY7VMGzLCuUTB776n6hDJKcZ-Hb7RelIJxLeOZteaxRVOiu-a9pG5NbQQuueQtS0C-kqHlVksEwUAucqzS9UXX3ucvmsIgYK-jQQ8jmtqPTjVkdFGhR1J3LzOw7VJCJQy4b_a_WZLDNS7bskxvvZgU7DOZAVHxYu1aPUHh3UaeJ-5oMwJ-sqFWg_6ZruUPk4L9f1KB1siRgSmxw-Eo4JHKXjSEsIXAylD3m_trgxEIxkeqgXFJ867U-qJxeG39ToS9BptAG_IGK-HfMD0ovPK9mKHXvrp32fRO5S0oiqaCMa8kV4DGwbZjaMArJDV9Ps3WNw_EE2E8m7J4UjiqLNQkihUtUM6d4xmJ-S4zo-qPJkr0ajWkDhQwkeJ1wsaYGXItivcoAB4lzyQmG3Zs5kQQIIa2m4hveEf2mDlglHMoPHTAN5hGG-9_LegexhFcKAZTguF4nNpozqAVsIQaj8DeAaHWY8AvjP5HjDTgYHs4ni3w7EjULGDSroFhBndTpCAMNjtY9yIqoh248Bf7ayWtBCXUx1yJyIamAPGeHej3nPnf80TACr2Of6fJicQ-hFcdVGzQj8qiq8b9GuOFFJ43SnZudftdAwwlA0mQb30ZhvgJvsYngGY752-NegVEd2F_r6N2Jkw-G-fzEnoObf6OXzGaYlNSq4_s4vGnQ38HGe_HPk7fdDIESUA35j1SbK5K83274IWvReND0Byubb2MmgZ4fJ90sCCKnjLeu9ho)" and demonstrate how ABC can be used to estimate model parameters for complex epidemic models. In particular, we recreate Figures 3(a) and 3(c) using a 4 parameter model on two sets of observed data - Table 2 (Addy et al., 1991) and Table 3 (Longini and Koopman, 1982) from the [Supplementary Data](https://academic.oup.com/bioinformatics/article/26/1/104/182571).
 
 ## ABC using the 4-parameter model
 
@@ -40,6 +40,11 @@ We define a function that takes parameters $q_c$, $q_h$ and (maximum) household 
 ```{r}
 # Function to compute w_js matrix for a given outbreak
 W_js_matrix <- function(q_c, q_h, household_size) {
+  
+  # Throw error if q_c or q_h is not a probability
+  if ((q_c < 0) || (q_h < 0) || (q_c > 1) || (q_h > 1)) {
+    stop(paste("Invalid inputs:", "q_c =", q_c, "b =", q_h, "; Probabilities must be between 0 and 1."))
+  }
   
   nCol <- household_size      # Columns (susceptible individuals) indexed by s = 1,..., household_size
   nRow <- household_size + 1  # Rows (infected individuals) indexed by j = 0, 1,..., s
@@ -73,6 +78,11 @@ In this section, we simulate data based on the probability distribution $w_{js}$
 
 ```{r}
 simulate_household_data <- function(q_c, q_h, household_size, n_households) {
+  
+  # Throw error if user doesn't provide number of households for each household size
+  if (length(n_households) != household_size) {
+    stop("Invalid inputs: length(n_households) does not match (maximum) household_size.")
+  }
   
   w_js_matrix <- W_js_matrix(q_c, q_h, household_size)
   
@@ -402,7 +412,98 @@ legend("bottomleft",
        pch = 16, bty = "n")
 ```
 
-# Bibliography
+## Conclusion 
+xxxxxxxxxx
+
+## Appendix : Function Tests
+
+### Tests for W_js_matrix
+
+```{r}
+# Tests for W_js_matrix
+
+library(testthat)
+
+test_that("W_js_matrix throws error for bad parameters", {
+  expect_error(W_js_matrix(0.5, -0.1, 4))        # Negative q_h
+  expect_error(W_js_matrix(2, 0.9, 3))           # q_c > 1
+  expect_error(W_js_matrix(0.3, 0.2, -7))        # household_size not a positive integer
+})
+
+test_that("W_js_matrix works for simple cases", {
+  # q_h = q_c = 0 
+  W0 <- W_js_matrix(0,0,3)
+  expected_W0 <- matrix(c(0,0,0,
+                         1,0,0,
+                         0,1,0,
+                         0,0,1), ncol = 3, byrow = T)
+  expect_equivalent(W0, expected_W0)            # expect_equal will fail because of attribute comparison 
+                                                # W0 has rownames and colnames, while expected_W0 does not
+  # q_h = q_c = 1 
+  W1 <- W_js_matrix(1,1,4)
+  expected_W1 <- matrix(c(1,1,1,1,
+                         0,0,0,0,
+                         0,0,0,0,
+                         0,0,0,0,
+                         0,0,0,0), ncol = 4, byrow = T)
+  expect_equivalent(W1, expected_W1)            # W1 has rownames and colnames, while expected_W1 does not
+})
+  
+test_that("W_js_matrix columns sum to 1", {
+  for (i in 1:100) {                            # Test for 100 random cases
+    q_c <- runif(1, 0, 1)                       # Choose q_c randomly between 0 and 1
+    q_h <- runif(1, 0, 1)                       # Choose q_h randomly between 0 and 1
+    household_size <- sample(1:10, 1)           # Choose household_size randomly between 1 and 10
+
+    W <- W_js_matrix(q_c, q_h, household_size)
+    
+    expect_equivalent(colSums(W), rep(1, ncol(W)))   
+  }
+})
+```
+
+
+### Tests for simulate_household_data
+
+```{r}
+# Tests for simulate_household_data
+
+library(testthat)
+
+test_that("simulate_household_data throws error for bad parameters", {
+  expect_error(simulate_household_data(0.5, -0.1, 3, c(12,10,6)))   # Negative q_h
+  expect_error(simulate_household_data(1.4, 0.8, 4, c(12,10,6,3)))  # q_c > 1
+  expect_error(simulate_household_data(0.3, 0.4, 6, c(100,90,8)))   # length(n_households) != household_size 
+})
+
+test_that("simulate_household_data works for simple cases", {
+  # 0 number of households for household size 3 should return third column 0
+  data.0 <- simulate_household_data(0.1, 0.8, 4, c(12,8,0,10))
+
+  expect_equivalent(data.0[,3], rep(0,nrow(data.0)))  
+})
+  
+test_that("simulate_household_data doesn't have more infected than susceptible", {
+  q_c <- runif(1, 0, 1)                          # Choose q_c randomly between 0 and 1
+  q_h <- runif(1, 0, 1)                          # Choose q_h randomly between 0 and 1
+  household_size <- sample(1:10, 1)              # Random household size between 1 and 10
+  n_households <- sample(1:100, household_size)  # Random n_households vector of size household_size 
+  
+  result <- simulate_household_data(q_c, q_h, household_size, n_households)
+  
+  # Validate that entries for j > s are 0
+  for (j in 1 : nrow(result)) {             
+    for (s in 1 : ncol(result)) {           
+      if (j-1 > s) {                             # j corresponds to row (j-1)
+        expect_equivalent(result[j, s], 0)    
+      }
+    }
+  }
+})
+```
+
+
+## Bibliography
 
 [1] Toni T, Stumpf M.P.H. Simulation-based model selection for dynamical systems in systems and population biology. Bioinformatics, 104–110, 2010.
 
