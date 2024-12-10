@@ -156,15 +156,21 @@ The ABC algorithm for this project is given below.
 **Inputs:**
 
 * 4-parameter vector: $q = (q_{c1}, q_{h1}, q_{c2}, q_{h2})$
+
 * Target posterior: $P(q|D_{obs}) \propto P(D_{obs} | q)P(q)$
+
 * A way of simulating from $P(D_{obs}|q) \sim w_{js}$
+
 * Prior on the parameters: $P(q) \sim \text{Uniform}[0,1]$
+
 * Similarity measure: $d(D_{obs}, D^*) = \frac{1}{2} \left( \| D_1 - D^*(q_{c1}, q_{h1}) \|_F + \| D_2 - D^*(q_{c2}, q_{h2}) \|_F \right)$
+
 * Tolerance $\epsilon$
 
 **Sampling:** for $i = 1, 2, \dots, N$
 
 * Generate $q^{(i)} \sim \text{Uniform}[0,1]$
+
 * Generate $D^{*(i)} \sim w_{js}$
 
 **Accept/Reject Criterion:**
@@ -349,7 +355,7 @@ generate_abc_sample(given_data3, given_data4, distance,
                     prior_distribution, simulate_household_data, epsilon = 7)
 ```
 
-The code below produces 100 parameter samples that are accepted by the algorithm with $\epsilon = 7$.
+The code below produces 200 parameter samples that are accepted by the algorithm with $\epsilon = 7$.
 
 ```{r, include=FALSE, echo = FALSE, results='hide'}
 # DO NOT RUN THE CELL BELOW THIS ONE!
@@ -358,8 +364,8 @@ The code below produces 100 parameter samples that are accepted by the algorithm
 ```
 
 ```{r long-computation-2, eval=FALSE}
-# Generating 100 posterior samples
-posterior_samples2 <- replicate(n = 100,
+# Generating 200 posterior samples
+posterior_samples2 <- replicate(n = 200,
     generate_abc_sample(given_data3, given_data4, distance, 
                         prior_distribution, simulate_household_data, epsilon = 7))
 ```
@@ -368,10 +374,10 @@ posterior_samples2 <- replicate(n = 100,
 ```{r, include=FALSE, echo = FALSE, results='hide'}
 # Save posterior_samples_Table3.rds on your local machine (from Drive) before running this
 # saveRDS(posterior_samples2, "posterior_samples_Table3.rds")
- posterior_samples2 <- readRDS("posterior_samples_Table3.rds")
+posterior_samples2 <- readRDS("posterior_samples_Table3.rds")
 ```
 
-Here are a few posterior samples from the 100 generated above.
+Here are a few posterior samples from the 200 generated above.
 
 ```{r}
 posterior_samples2[, 95:100]
@@ -391,12 +397,12 @@ Finally, we plot the simulated parameters $q_h$ vs $q_c$ for the two outbreaks. 
 
 
 ```{r}
-# Recreate Figure 3(b) with n = 100 posterior samples and epsilon = 7
+# Recreate Figure 3(b) with n = 200 posterior samples and epsilon = 7
 
 par(pty = "s")      
 
 plot(q_h3, q_c3, 
-     main = "q_h vs q_c (n = 100, epsilon = 7)", 
+     main = "q_h vs q_c (n = 200, epsilon = 7)", 
      xlab = "q_h", ylab = "q_c", 
      xlim = c(0, 1), ylim = c(0, 1), 
      pch = 16, col = "red", 
