@@ -141,7 +141,18 @@ We define the said distance function that takes two pairs of observed and simula
 
 ```{r}
 frobenius_norm <- function(A) return(sqrt(sum(A^2)))
+
 distance <- function(given_data1, given_data2, simulated_data1, simulated_data2){
+  # Throw error if given_data1 and simulated_data1 aren't the same size
+  if(ncol(given_data1)!=ncol(simulated_data1) || nrow(given_data1) != nrow(simulated_data1)){
+    stop("Invalid inputs: given_data1 and simulated_data1 have different dimensions")
+  }
+  
+  # Throw error if given_data2 and simulated_data2 aren't the same size
+  if(ncol(given_data2)!=ncol(simulated_data2) || nrow(given_data2) != nrow(simulated_data2)){
+    stop("Invalid inputs: given_data1 and simulated_data1 have different dimensions")
+  }
+  
   distance1 = frobenius_norm(given_data1-simulated_data1)
   distance2 = frobenius_norm(given_data2-simulated_data2)
   total_distance = (distance1+distance2)/2
@@ -191,9 +202,19 @@ generate_abc_sample <- function(given_data1, given_data2,
                                 prior_distribution,
                                 data_simulating_function,
                                 epsilon) {
+    # Throw error if prior_distribution is not of the right shape
+    if(len(prior_distribution)!=4){
+      stop("Prior_distribution must have exactly 4 entries")
+    }
+    
+    #Throw error if tolerance level is not positive
+    if(epsilon <= 0){
+      stop("Epsilon must be positive")
+    }
+        
     while(TRUE) {
         q <- prior_distribution()
-        
+      
         q_c1 <- q[1]
         q_h1 <- q[2]
         q_c2 <- q[3]
@@ -507,6 +528,83 @@ test_that("simulate_household_data doesn't have more infected than susceptible",
   }
 })
 ```
+
+### Tests for Frobenius norm
+
+```{r}
+# Tests for frobenius_norm
+
+library(testthat)
+
+test_that("frobenius_norm works on simple cases: zero matrix",{
+  # The norm of the 0 matrix should be zero
+  zero_matrix <-matrix(c(0,0,0,0,0,0,0,0,0), nrow=3)
+  
+  expect_equivalent(frobenius_norm(zero_matrix), 0)
+})
+
+test_that("frobenius_norm works on simple cases: c(1,2,0,-2)",{
+  # Checks that the Frobenius norm is 3 on this simple case
+  example_matrix <-matrix(c(1,2,0,-2), nrow=2)
+  
+  expect_equivalent(frobenius_norm(example_matrix), 3)
+})
+
+```
+
+### Tests for distance
+
+```{r}
+# Tests for distance
+
+library(testthat)
+
+test_that("distance throws error for bad parameters", {
+  size1 = matrix(1, nrow=1)
+  size2 = matrix(c(2,2,2,2), nrow =2)
+  
+  expect_error(distance(size1, size1, size2, size1))   # Given_data_1 and simulated_data_1 have different sizes
+  expect_error(distance(size1, size1, size1, size2))  # Given_data_2 and simulated_data_2 have different sizes
+})
+
+test_that("distance works on simple cases: distance between given data and simulated data is 0 when given and simulated data are identical",{
+  data_1 <- matrix(c(1,1,1,1), nrow=2)
+  data_2 <- matrix(c(2,2,2,2), nrow=2)
+  
+  expect_equivalent(distance(data_1, data_2, data_1, data_2), 0)
+})
+
+test_that("distance works on simple cases",{
+  given_data_1 <- matrix(c(1,1,1,1), nrow=2)
+  given_data_2 <- matrix(c(2,2,2,2), nrow=2)
+  simulated_data_both <- matrix(c(0,0,0,0), nrow = 2)
+  
+  expect_equivalent(distance(given_data_1, given_data_2, simulated_data_both,  simulated_data_both), 3)
+})
+
+```
+
+### Tests for generate_abc_sample
+
+```{r}
+# Tests for generate_abc_sample
+
+library(testthat)
+
+test_that("generate_abc_sample throws errors for bad parameters", {
+  
+  expect_error(generate_abc_sample(given_data3, given_data4, distance, 
+                    prior_distribution, simulate_household_data, epsilon = -1)) # negative epsilon
+  expect_error(generate_abc_sample(given_data3, given_data4, distance, 
+                    prior_distribution, simulate_household_data, epsilon = 0)) # zero epsilon
+  expect_error(generate_abc_sample(given_data3, given_data4, distance, 
+                    prior_distribution = c(1,2,3), simulate_household_data, epsilon = 20)) # wrong size prior_distribution
+})
+
+```
+
+
+
 
 
 ## Bibliography
