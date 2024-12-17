@@ -202,10 +202,6 @@ generate_abc_sample <- function(given_data1, given_data2,
                                 prior_distribution,
                                 data_simulating_function,
                                 epsilon) {
-    # Throw error if prior_distribution is not of the right shape
-    if(len(prior_distribution)!=4){
-      stop("Prior_distribution must have exactly 4 entries")
-    }
     
     #Throw error if tolerance level is not positive
     if(epsilon <= 0){
@@ -214,6 +210,11 @@ generate_abc_sample <- function(given_data1, given_data2,
         
     while(TRUE) {
         q <- prior_distribution()
+        
+        # Throw error if prior_distribution is not of the right shape
+        if(as.double(length(q))!=4){
+          stop("Prior_distribution must have exactly 4 entries")
+        }
       
         q_c1 <- q[1]
         q_h1 <- q[2]
@@ -368,8 +369,6 @@ given_data4 <- matrix(c(15, 12, 4,
 As with data from Table 2, we now apply our sample generating function to get posterior samples for $(q_{c3}, q_{h3}, q_{c4}, q_{h4})$. Since the given data in Table 3 is smaller than the one in Table 2, we are able to choose a smaller $\epsilon$ and still be within computational limits. We use $\epsilon = 7$ as a reasonable tolerance level.
 
 ```{r}
-prior_distribution <- function() runif(n = 4, min = 0, max = 1)     
-
 # Generating one posterior sample 
 
 generate_abc_sample(given_data3, given_data4, distance, 
@@ -438,6 +437,130 @@ legend("bottomleft",
        col = c("red", "blue"), 
        pch = 16, bty = "n")
 ```
+
+
+## Two Parameter Model
+
+The plot comparing models of outbreaks of the same strain of the virus suggests that different outbreaks of the same strain of a virus can be modeled using the same parameters. To this end, in this section we write functions for the two parameter model described by Toni and Stumpf and use this model to find parameters for the model of influenza A. This process follows the process for the four parameter model closely. We can reuse the functions W_js_matrix and simulate_household_data without any changes. Below we rework the functions prior_distribution, distance, and generate_abc_samples to work with the two parameter model.
+
+```{r}
+# Returns 2 random values from the uniform prior distrubution on [0,1]
+
+prior_distribution_2 <- function() runif(n = 2, min = 0, max = 1)  
+
+```
+
+```{r}
+# Uses the Frobenius norm to return the distance between two data sets "given_data" and "simulated_data"
+
+distance_2 <- function(given_data, simulated_data){
+  # Throw error if given_data and simulated_data aren't the same size
+  if(ncol(given_data)!=ncol(simulated_data) || nrow(given_data) != nrow(simulated_data)){
+    stop("Invalid inputs: given_data and simulated_data have different dimensions")
+  }
+
+  total_distance = frobenius_norm(given_data-simulated_data)
+  return(total_distance)
+}
+
+```
+
+```{r}
+# This function generates posteriors for the 2 parameter model
+
+generate_abc_sample_2 <- function(given_data,
+                                distance,
+                                prior_distribution,
+                                data_simulating_function,
+                                epsilon) {
+    
+    #Throw error if tolerance level is not positive
+    if(epsilon <= 0){
+      stop("Epsilon must be positive")
+    }
+        
+    while(TRUE) {
+        q <- prior_distribution()
+        
+        # Throw error if prior_distribution is not of the right shape
+        if(as.double(length(q))!=2){
+          stop("Prior_distribution must have exactly 2 entries")
+        }
+      
+        q_c <- q[1]
+        q_h <- q[2]
+        
+        household_size <- ncol(given_data)
+        n_households <- colSums(given_data)
+        
+        simulated_data <- data_simulating_function(q_c, q_h, household_size, n_households)
+        
+        if(distance_2(given_data, simulated_data) < epsilon) {
+            return(q)
+        }
+    }
+}
+```
+
+### 2 Parameter Model for Influenza A Outbreaks
+
+Now with these modified functions we are able to build a 2 parameter model for influenza A. To do this we will first combine the data given for the 1977-78 and 1980-81 outbreaks of influenza A into one matrix by adding the matrices for the separate outbreaks.
+
+```{r}
+combined_influenza_data <- given_data1 + given_data2
+
+```
+
+Using this data set, we can use the 2 parameter functions from above to generate many posterior samples. Here we use the same value for epsilon as in the 4 parameter model.
+
+```{r}
+combined_influenza_posterior_samples <- replicate(n = 100, generate_abc_sample_2(combined_influenza_data, distance_2,
+                        prior_distribution_2, simulate_household_data, epsilon = 15))
+```
+
+Below is code to save this locally.
+
+```{r}
+saveRDS(combined_influenza_posterior_samples, "combined_influenza_posterior_samples.rds")
+combined_influenza_posterior_samples <- readRDS("combined_influenza_posterior_samples.rds")
+```
+
+Here are a few posterior samples from the 100 generated above.
+
+```{r}
+combined_influenza_posterior_samples[, 95:100]
+
+```
+
+We can represent all of this data in a scatterplot similar to the ones above.
+
+```{r}
+par(pty = "s")      
+
+plot(combined_influenza_posterior_samples[2,], combined_influenza_posterior_samples[1,], 
+     main = "q_h vs q_c (n = 100, epsilon = 15)", 
+     xlab = "q_h", ylab = "q_c", 
+     xlim = c(0, 1), ylim = c(0, 1), 
+     pch = 16, col = "blue", 
+     cex = 1.5)
+
+```
+
+
+One way to choose parameters to model the spread of influenza A would be to take $q_c$ and $q_h$ to be the average of the parameters stored in generated by this 2 parameter ABC approach.
+
+```{r}
+influenza_a_q_c <- mean(combined_influenza_posterior_samples[1,])
+
+influenza_a_q_h <- mean(combined_influenza_posterior_samples[2,])
+
+print(paste("q_c is", influenza_a_q_c , "and q_h is" , influenza_a_q_h))
+  
+```
+
+
+
+
 
 ## Conclusion 
 xxxxxxxxxx
