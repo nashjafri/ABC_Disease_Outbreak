@@ -1,9 +1,13 @@
 ---
 title: "Approximate Bayesian Computation for Disease Outbreak"
-author: 
-  - "Nasheed Jafri"
-  - "Abigail Watkins"
-output: html_document
+author:
+- Nasheed Jafri
+- Abigail Watkins
+output:
+  html_document: default
+  pdf_document: 
+    latex_engine: xelatex
+fontsize: 11pt
 ---
 
 ## Introduction
@@ -444,7 +448,7 @@ legend("bottomleft",
 The plot comparing models of outbreaks of the same strain of the virus suggests that different outbreaks of the same strain of a virus can be modeled using the same parameters. To this end, in this section we write functions for the two parameter model described by Toni and Stumpf and use this model to find parameters for the model of influenza A. This process follows the process for the four parameter model closely. We can reuse the functions W_js_matrix and simulate_household_data without any changes. Below we rework the functions prior_distribution, distance, and generate_abc_samples to work with the two parameter model.
 
 ```{r}
-# Returns 2 random values from the uniform prior distrubution on [0,1]
+# Returns 2 random values from the uniform prior distribution on [0,1]
 
 prior_distribution_2 <- function() runif(n = 2, min = 0, max = 1)  
 
@@ -511,17 +515,23 @@ combined_influenza_data <- given_data1 + given_data2
 
 ```
 
-Using this data set, we can use the 2 parameter functions from above to generate many posterior samples. Here we use the same value for epsilon as in the 4 parameter model.
+Using this data set, we can use the 2 parameter functions from above to generate many posterior samples. Here we use the same value for $\epsilon$ as in the 4 parameter model.
 
-```{r}
+```{r, include=FALSE, echo = FALSE, results='hide'}
+# DO NOT RUN THE CELL BELOW THIS ONE!
+# It will take forever. Have already run it and saved the output as RDS to access it again.
+# Otherwise it creates problems in knitting and tries to draw samples again.  
+```
+
+```{r long-computation-3, eval=FALSE}
 combined_influenza_posterior_samples <- replicate(n = 100, generate_abc_sample_2(combined_influenza_data, distance_2,
                         prior_distribution_2, simulate_household_data, epsilon = 15))
 ```
 
-Below is code to save this locally.
 
-```{r}
-saveRDS(combined_influenza_posterior_samples, "combined_influenza_posterior_samples.rds")
+```{r, include=FALSE, echo = FALSE, results='hide'}
+# Save combined_influenza_posterior_samples.rds on your local machine before running this
+# saveRDS(combined_influenza_posterior_samples, "combined_influenza_posterior_samples.rds")
 combined_influenza_posterior_samples <- readRDS("combined_influenza_posterior_samples.rds")
 ```
 
@@ -554,13 +564,147 @@ influenza_a_q_c <- mean(combined_influenza_posterior_samples[1,])
 
 influenza_a_q_h <- mean(combined_influenza_posterior_samples[2,])
 
-print(paste("q_c is", influenza_a_q_c , "and q_h is" , influenza_a_q_h))
+print(paste("Mean q_c is", round(influenza_a_q_c,4) , "and mean q_h is" , round(influenza_a_q_h,4)))
   
 ```
 
 
+```{r}
+median(combined_influenza_posterior_samples[1,])
+```
+
+## Three Parameter Model
+
+The plot comparing models of the outbreaks of different strains of the virus suggests that outbreaks of different strains have the same $q_h$ but different $q_c$. This can be modeled using a 3-parameter model same parameters $(q_{c1},q_{c2},q_h)$. We can again reuse the functions `W_js_matrix`, `simulate_household_data` and `distance` without any changes. Below we rework the functions `prior_distribution`, and `generate_abc_samples` to work with the three parameter model.
 
 
+```{r}
+# Returns 3 random values from the uniform prior distribution on [0,1]
+
+prior_distribution_3 <- function() runif(n = 3, min = 0, max = 1)  
+
+```
+
+
+```{r}
+# This function generates posteriors for the 3 parameter model
+generate_abc_sample3 <- function(given_data1, given_data2,
+                                distance,
+                                prior_distribution,
+                                data_simulating_function,
+                                epsilon) {
+    
+    #Throw error if tolerance level is not positive
+    if(epsilon <= 0){
+      stop("Epsilon must be positive")
+    }
+        
+    while(TRUE) {
+        q <- prior_distribution()
+        
+        # Throw error if prior_distribution is not of the right shape
+        if(as.double(length(q))!=3){
+          stop("Prior_distribution must have exactly 3 entries")
+        }
+      
+        q_c1 <- q[1]
+        q_c2 <- q[2]
+        q_h <- q[3]
+        
+        household_size1 <- ncol(given_data1)
+        n_households1 <- colSums(given_data1)
+        
+        simulated_data1 <- data_simulating_function(q_c1, q_h, household_size1, n_households1)
+        
+        household_size2 <- ncol(given_data2)
+        n_households2 <- colSums(given_data2)
+        
+        simulated_data2 <- data_simulating_function(q_c2, q_h, household_size2, n_households2)
+        
+        if(distance(given_data3, given_data4, simulated_data1, simulated_data2) < epsilon) {
+            return(q)
+        }
+    }
+}
+```
+
+### 3 Parameter Model for Influenza A and Influenz B Outbreaks
+
+Now with these modified functions we are able to build a 3 parameter model for influenza A and influenza B. We use the same data again as given in Table 3.
+
+```{r}
+given_data3 <- matrix(c(9, 12, 18, 9, 4,
+                        1, 6, 6, 4, 3,
+                        0, 2, 3, 4, 0,
+                        0, 0, 1, 3, 2,
+                        0, 0, 0, 0, 0, 
+                        0, 0, 0, 0, 0), byrow = TRUE, ncol=5)
+
+given_data4 <- matrix(c(15, 12, 4,
+                        11, 17, 4,
+                        0, 21, 4,
+                        0, 0, 5 ), byrow = TRUE, ncol=3)
+
+```
+
+Using this data set, we can use the 3 parameter functions from above to generate many posterior samples. Here we again use $\epsilon = 7$ for this smaller dataset and generate 200 samples.
+
+```{r, include=FALSE, echo = FALSE, results='hide'}
+# DO NOT RUN THE CELL BELOW THIS ONE!
+# It will take forever. Have already run it and saved the output as RDS to access it again.
+# Otherwise it creates problems in knitting and tries to draw samples again.  
+```
+
+```{r long-computation-4, eval=FALSE}
+# Generating 200 posterior samples
+influenzaAB_samples <- replicate(n = 200,
+    generate_abc_sample3(given_data3, given_data4, distance, 
+                        prior_distribution_3, simulate_household_data, epsilon = 7))
+```
+
+
+```{r, include=FALSE, echo = FALSE, results='hide'}
+# Save influenzaAB_samples.rds on your local machine before running this
+# saveRDS(influenzaAB_samples, "influenzaAB_samples.rds")
+influenzaAB_samples <- readRDS("influenzaAB_samples.rds")
+```
+
+Here are a few posterior samples from the 200 generated above.
+
+```{r}
+influenzaAB_samples[, 195:200]
+```
+We now extract individual parameters $q_{c1}$, $q_{c2}$ and $q_{h}$ from the samples. 
+
+```{r}
+# Extracting samples of parameters q_c3, q_h3, q_c4, q_h4 from the posterior samples
+q_c_1 <- influenzaAB_samples[1, ]  # First row for q_c_1
+q_c_2 <- influenzaAB_samples[2, ]  # Second row for q_c_2
+q_h <- influenzaAB_samples[3, ]  # Third row for q_h
+```
+
+We can represent all of this data in a scatterplot similar to the ones above.
+
+```{r}
+par(pty = "s")      
+
+# Add first set of data (q_h, q_c_1) in red
+plot(q_h, q_c_1, 
+     main = "q_h vs q_c (n = 200, epsilon = 7)", 
+     xlab = "q_h", ylab = "q_c", 
+     xlim = c(0, 1), ylim = c(0, 1), 
+     pch = 16, col = "red", 
+     cex = 1.5)  
+
+# Add second set of data (q_h, q_c_2) in blue
+points(q_h, q_c_2, pch = 16, col = "blue", cex = 1.2)
+
+# Add a legend
+legend("bottomleft", 
+       legend = c("given_data3 from Table 3", "given_data4 from Table 3"), 
+       col = c("red", "blue"), 
+       pch = 16, bty = "n")
+```
 
 ## Conclusion 
 xxxxxxxxxx
