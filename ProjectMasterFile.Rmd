@@ -10,13 +10,15 @@ output:
 fontsize: 11pt
 ---
 
+**GitHub repository:** [StatS610FinalProjectABCDisease](https://github.com/aswatkin/StatS610FinalProjectABCDisease)
+
 ## Introduction
 
 In this project, we apply ABC to fit parameters in a model for influenza A and B strains, based on data from past outbreaks in Michigan and Seattle. The process involves drawing parameters from prior uniform distribution, simulating data based on those parameters, computing a similarity measure between simulated and observed data, and iteratively refining the parameter estimates. 
 
 **Objective**: The objective of this project is to replicate the model selection results presented in Section 3.3 of Tony and Stumpf's paper, "[Simulation-based model selection for dynamical systems in systems and population biology](https://watermark.silverchair.com/bioinformatics_26_1_104.pdf?token=AQECAHi208BE49Ooan9kkhW_Ercy7Dm3ZL_9Cf3qfKAc485ysgAAA3swggN3BgkqhkiG9w0BBwagggNoMIIDZAIBADCCA10GCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMjV15kHzFknWstbVZAgEQgIIDLvGZcFAgMxJ2FtxTGrsPvkAoO-imsFvwyY2RJRbPWpz_WYOR3ZYIIXnJpmCp_pOOlhB9fGwvPCCBNkFN7jjQvo-jtSs3vYGT9U9ABO1ngcGxGq0M_-xfz5QDNcfLJpdHphXjvXPmNQKw-FbmW7Z-lM4VADhWgRMXeAa69IcQWbf3O3M4YVlAfOhNibTRLt8QLpayutZlbZAwX6aC2a13wmjnKF6Vx3WJWazbewssqJov9CmNXprFKUqnhcq1QLZ4oaGSKYaxVFpmwB2ZylzUBbliQ3fYN6VRAfleLXrmyvOymid2GtXNnhrslyx6SN2OSgbXU0YIgfSgCk5OaCETsFY7VMGzLCuUTB776n6hDJKcZ-Hb7RelIJxLeOZteaxRVOiu-a9pG5NbQQuueQtS0C-kqHlVksEwUAucqzS9UXX3ucvmsIgYK-jQQ8jmtqPTjVkdFGhR1J3LzOw7VJCJQy4b_a_WZLDNS7bskxvvZgU7DOZAVHxYu1aPUHh3UaeJ-5oMwJ-sqFWg_6ZruUPk4L9f1KB1siRgSmxw-Eo4JHKXjSEsIXAylD3m_trgxEIxkeqgXFJ867U-qJxeG39ToS9BptAG_IGK-HfMD0ovPK9mKHXvrp32fRO5S0oiqaCMa8kV4DGwbZjaMArJDV9Ps3WNw_EE2E8m7J4UjiqLNQkihUtUM6d4xmJ-S4zo-qPJkr0ajWkDhQwkeJ1wsaYGXItivcoAB4lzyQmG3Zs5kQQIIa2m4hveEf2mDlglHMoPHTAN5hGG-9_LegexhFcKAZTguF4nNpozqAVsIQaj8DeAaHWY8AvjP5HjDTgYHs4ni3w7EjULGDSroFhBndTpCAMNjtY9yIqoh248Bf7ayWtBCXUx1yJyIamAPGeHej3nPnf80TACr2Of6fJicQ-hFcdVGzQj8qiq8b9GuOFFJ43SnZudftdAwwlA0mQb30ZhvgJvsYngGY752-NegVEd2F_r6N2Jkw-G-fzEnoObf6OXzGaYlNSq4_s4vGnQ38HGe_HPk7fdDIESUA35j1SbK5K83274IWvReND0Byubb2MmgZ4fJ90sCCKnjLeu9ho)" and demonstrate how ABC can be used to estimate model parameters for complex epidemic models. In particular, we recreate Figures 3(a) and 3(c) using a 4 parameter model on two sets of observed data - Table 2 (Addy et al., 1991) and Table 3 (Longini and Koopman, 1982) from the [Supplementary Data](https://academic.oup.com/bioinformatics/article/26/1/104/182571).
 
-## ABC using the 4-parameter model
+## The 4-parameter model
 
 Let $q_c$ denote the probability that a susceptible individual does not get infected from the community and $q_h$ the probability that a susceptible individual escapes infection within their household. The probability $w_{js}$, that $j$ out of the $s$ susceptible individuals in a household become infected, is then given by
 
@@ -130,6 +132,7 @@ n_households <- c(79, 105, 48, 44, 11)    # Number of households (same as observ
 simulated_data <- simulate_household_data(q_c, q_h, household_size, n_households)
 print(simulated_data)
 ```
+
 ### Similarity measure between the simulated and observed data
 
 To apply ABC, we use the following distance function for observed and simulated datasets.
@@ -242,7 +245,7 @@ generate_abc_sample <- function(given_data1, given_data2,
 }
 ```
 
-## Observed Data (Table 2)
+### Observed Data (Table 2)
 
 The following code stores the observed data from Table 2 of the Supplementary Material. 
 
@@ -300,7 +303,7 @@ posterior_samples <- replicate(n = 100,
 
 
 ```{r, include=FALSE, echo = FALSE, results='hide'}
-# Save posterior_samples_Table2.rds on your local machine (from Drive) before running this
+# Save posterior_samples_Table2.rds on your local machine before running this
 # saveRDS(posterior_samples, "posterior_samples_Table2.rds")
 posterior_samples <- readRDS("posterior_samples_Table2.rds")
 ```
@@ -346,7 +349,7 @@ legend("bottomleft",
        pch = 16, bty = "n")
 ```
 
-## Observed Data (Table 3)
+### Observed Data (Table 3)
 
 The following code stores the observed data from Table 3 of the Supplementary Material. 
 
@@ -443,19 +446,18 @@ legend("bottomleft",
 ```
 
 
-## Two Parameter Model
+## The 2-parameter model
 
-The plot comparing models of outbreaks of the same strain of the virus suggests that different outbreaks of the same strain of a virus can be modeled using the same parameters. To this end, in this section we write functions for the two parameter model described by Toni and Stumpf and use this model to find parameters for the model of influenza A. This process follows the process for the four parameter model closely. We can reuse the functions W_js_matrix and simulate_household_data without any changes. Below we rework the functions prior_distribution, distance, and generate_abc_samples to work with the two parameter model.
+The plot comparing models of outbreaks of the same strain of the virus suggests that different outbreaks of the same strain of a virus can be modeled using the same parameters. To this end, in this section we write functions for the two parameter model described by Toni and Stumpf and use this model to find parameters for the model of influenza A. This process follows the process for the four parameter model closely. We can reuse the functions `W_js_matrix` and `simulate_household_data` without any changes. Below we rework the functions `prior_distribution`, `distance`, and `generate_abc_samples` to work with the two parameter model.
 
 ```{r}
 # Returns 2 random values from the uniform prior distribution on [0,1]
-
 prior_distribution_2 <- function() runif(n = 2, min = 0, max = 1)  
 
 ```
 
 ```{r}
-# Uses the Frobenius norm to return the distance between two data sets "given_data" and "simulated_data"
+# Uses the Frobenius norm to return the distance between "given_data" and "simulated_data"
 
 distance_2 <- function(given_data, simulated_data){
   # Throw error if given_data and simulated_data aren't the same size
@@ -466,12 +468,10 @@ distance_2 <- function(given_data, simulated_data){
   total_distance = frobenius_norm(given_data-simulated_data)
   return(total_distance)
 }
-
 ```
 
 ```{r}
 # This function generates posteriors for the 2 parameter model
-
 generate_abc_sample_2 <- function(given_data,
                                 distance,
                                 prior_distribution,
@@ -508,11 +508,10 @@ generate_abc_sample_2 <- function(given_data,
 
 ### 2 Parameter Model for Influenza A Outbreaks
 
-Now with these modified functions we are able to build a 2 parameter model for influenza A. To do this we will first combine the data given for the 1977-78 and 1980-81 outbreaks of influenza A into one matrix by adding the matrices for the separate outbreaks.
+Now with these modified functions we are able to build a 2 parameter model for influenza A. To do this we will first combine the data given for the 1977-78 and 1980-81 outbreaks of influenza A into one matrix by adding the matrices for the separate outbreaks. Another approach could be to still use the average Frobenius distance between the separate datasets and two simulated ones, which perhap the authors do.
 
 ```{r}
 combined_influenza_data <- given_data1 + given_data2
-
 ```
 
 Using this data set, we can use the 2 parameter functions from above to generate many posterior samples. Here we use the same value for $\epsilon$ as in the 4 parameter model.
@@ -524,8 +523,8 @@ Using this data set, we can use the 2 parameter functions from above to generate
 ```
 
 ```{r long-computation-3, eval=FALSE}
-#combined_influenza_posterior_samples <- replicate(n = 100, generate_abc_sample_2(combined_influenza_data, distance_2,
-                        #prior_distribution_2, simulate_household_data, epsilon = 15))
+combined_influenza_posterior_samples <- replicate(n = 100, generate_abc_sample_2(combined_influenza_data, distance_2,
+                      prior_distribution_2, simulate_household_data, epsilon = 15))
 ```
 
 
@@ -539,7 +538,6 @@ Here are a few posterior samples from the 100 generated above.
 
 ```{r}
 combined_influenza_posterior_samples[, 95:100]
-
 ```
 
 We can represent all of this data in a scatterplot similar to the ones above.
@@ -569,16 +567,14 @@ print(paste("Mean q_c is", round(influenza_a_q_c,4) , "and mean q_h is" , round(
 ```
 
 
-## Three Parameter Model
+## The 3-Parameter model
 
 The plot comparing models of the outbreaks of different strains of the virus suggests that outbreaks of different strains have the same $q_h$ but different $q_c$. This can be modeled using a 3-parameter model same parameters $(q_{c1},q_{c2},q_h)$. We can again reuse the functions `W_js_matrix`, `simulate_household_data` and `distance` without any changes. Below we rework the functions `prior_distribution`, and `generate_abc_samples` to work with the three parameter model.
 
 
 ```{r}
 # Returns 3 random values from the uniform prior distribution on [0,1]
-
 prior_distribution_3 <- function() runif(n = 3, min = 0, max = 1)  
-
 ```
 
 
@@ -670,6 +666,7 @@ Here are a few posterior samples from the 200 generated above.
 ```{r}
 influenzaAB_samples[, 195:200]
 ```
+
 We now extract individual parameters $q_{c1}$, $q_{c2}$ and $q_{h}$ from the samples. 
 
 ```{r}
@@ -702,8 +699,458 @@ legend("bottomleft",
        pch = 16, bty = "n")
 ```
 
+## Model Comparison using ABC rejection sampler
+
+We can also use ABC to compare different models. Below is a brief algorithm showing how to do the same:
+
+**Inputs:**
+
+* A set of models to compare: $m^{(i)} \in M$
+
+* Prior over models $P(m)$
+
+* Prior over parameters for every model $P(q | m)$
+
+* Data simulator: $f(q|m) = D^*(q)$
+
+* Tolerance $\epsilon$
+
+**Simulations:** for $i = 1, 2, \dots, N$
+
+* Sample model $m^{(i)} \sim P(m)$
+
+* Sample parameters $q^{(i)} \sim P(q|m^{(i)})$
+
+* Generate $D^{*(i)} \sim f(q^{(i)} | m^{(i)})$
+
+**Accept/Reject Criterion:**
+
+* If $d(D_{obs}, D^{*(i)}) < \epsilon$, accept $q^{(i)}$, else reject.
+
+**Model Posterior Probability Approximation:**
+
+* The ratio of number of accepted parameter values approximate the model posterior distribution $P(m^{(i)}|D_{obs})$.
+
+$$P(m^{(i)}|D_{obs}) \approx \cfrac{\text{# accepted samples for } m^{(i)}}{\text{# total accepted samples}}$$
+
+That is, the more often a sample belonging to a model $m^{(i)}$ is accepted, the higher the evidence for this model.
+
+### 2-Parameter Model vs 4-Parameter Model for different outbreaks of the same virus
+
+Below we write a function to compare the 2-parameter model (model 1) and the 4-parameter model (model 2) for the two outbreaks of influenza A strain. Prior over models is uniform over model 1 and model 2, prior for parameters is Uniform[0,1] for both models and data generating function is the same as before, i.e. `simulate_household_data`. Here we take the average Frobenius distance for the 2-parameter model to replicate the authors' results in Figure 1(a) of Supplementary data. 
+
+We use a subset of the tolerance schedule used by the authors, namely $\epsilon = \{100, 80, 50, 30, 20\}$.
+
+```{r}
+# Function to calculate posterior model probabilities 
+# for model 1 (2-parameter) and model 2 (4-parameter) for Table 2
+calculate_model_postr <- function(given_data1, given_data2, epsilon, n_samples) {
+  
+  # Initialize counters for accepted samples
+  accepted_samples_model_1 <- 0
+  accepted_samples_model_2 <- 0
+  
+  for (i in 1:n_samples) {
+    
+    # Run the 2-parameter model (model 1)
+    # We don't combine the datasets for the two outbreaks in this section
+    
+    q_model_1 <- prior_distribution_2()
+    
+    q_c <- q_model_1[1]
+    q_h <- q_model_1[2]
+        
+    household_size11 <- ncol(given_data1)
+    n_households11 <- colSums(given_data1)
+        
+    simulated_data11 <- simulate_household_data(q_c, q_h, household_size11, n_households11)
+        
+    household_size12 <- ncol(given_data2)
+    n_households12 <- colSums(given_data2)
+        
+    simulated_data12 <- simulate_household_data(q_c, q_h, household_size12, n_households12)
+    
+    if (distance(given_data1, given_data2, simulated_data11, simulated_data12) < epsilon) {
+      accepted_samples_model_1 <- accepted_samples_model_1 + 1
+    }
+    
+    # Run the 4-parameter model (model 2)
+    
+    q_model_2 <- prior_distribution()
+    
+    q_c1 <- q_model_2[1]
+    q_h1 <- q_model_2[2]
+    q_c2 <- q_model_2[3]
+    q_h2 <- q_model_2[4]
+    
+    
+    household_size21 <- ncol(given_data1)
+    n_households21 <- colSums(given_data1)
+        
+    simulated_data21 <- simulate_household_data(q_c1, q_h1, household_size21, n_households21)
+        
+    household_size22 <- ncol(given_data2)
+    n_households22 <- colSums(given_data2)
+        
+    simulated_data22 <- simulate_household_data(q_c2, q_h2, household_size22, n_households22)
+
+    if (distance(given_data1, given_data2, simulated_data21, simulated_data22) < epsilon) {
+      accepted_samples_model_2 <- accepted_samples_model_2 + 1
+    }
+    
+  }
+  
+  
+  # Calculate the posterior probabilities for both models
+  
+  total_accepted_samples <- accepted_samples_model_1 + accepted_samples_model_2
+  
+  if (total_accepted_samples == 0) {
+    stop("No samples were accepted for either model. Adjust epsilon or check your data.")
+  }
+  
+  posterior_prob_model_1 <- accepted_samples_model_1 / total_accepted_samples
+  posterior_prob_model_2 <- accepted_samples_model_2 / total_accepted_samples
+  
+  return(list(model_1_posterior_prob = posterior_prob_model_1,
+              model_2_posterior_prob = posterior_prob_model_2,
+              accepted_samples_model_1 = accepted_samples_model_1,
+              accepted_samples_model_2 = accepted_samples_model_2))
+}
+
+```
+
+This function takes the datasets for the two outbreaks, a tolerance level and number of iterations to perform, and returns a list containing posterior probabilities for both models as well as the number of accepted samples for both models.
+
+```{r, include=FALSE, echo = FALSE, results='hide'}
+# Save model_postr as rds on your local machine before running this
+# saveRDS(model_postr_100, "1model_postr_100.rds")
+# saveRDS(model_postr_80, "1model_postr_80.rds")
+# saveRDS(model_postr_50, "1model_postr_50.rds")
+# saveRDS(model_postr_30, "1model_postr_30.rds")
+# saveRDS(model_postr_20, "1model_postr_20.rds")
+model_postr_100 <- readRDS("1model_postr_100.rds")
+model_postr_80 <- readRDS("1model_postr_80.rds")
+model_postr_50 <- readRDS("1model_postr_50.rds")
+model_postr_30 <- readRDS("1model_postr_30.rds")
+model_postr_20 <- readRDS("1model_postr_20.rds")
+```
+
+Here we approximate posterior probabilities for the models using 1000 iterations and tolerance levels from our tolerance schedule.
+
+```{r long-computation-5, eval=FALSE}
+model_postr_100 <- calculate_model_postr(given_data1, given_data2, epsilon = 100, n_samples = 1000)
+
+model_postr_80 <- calculate_model_postr(given_data1, given_data2, epsilon = 80, n_samples = 1000)
+
+model_postr_50 <- calculate_model_postr(given_data1, given_data2, epsilon = 50, n_samples = 1000)
+
+model_postr_30 <- calculate_model_postr(given_data1, given_data2, epsilon = 30, n_samples = 1000)
+
+model_postr_20 <- calculate_model_postr(given_data1, given_data2, epsilon = 20, n_samples = 1000)
+```
+
+Here are the outputs from the above code in a dataframe form for easy readability. We don't display the code for it, but it can be found in our RMD file. 
+
+```{r, echo = FALSE}
+# Create a table using cbind
+model_table <- cbind(
+  "n_samples = 1000" = c(
+    "epsilon = 100",
+    "epsilon = 80",
+    "epsilon = 50",
+    "epsilon = 30",
+    "epsilon = 20"
+  ),
+  "Model 1 Posterior Probability" = c(
+    round(model_postr_100$model_1_posterior_prob,3),
+    round(model_postr_80$model_1_posterior_prob,3),
+    round(model_postr_50$model_1_posterior_prob,3),
+    round(model_postr_30$model_1_posterior_prob,3),
+    round(model_postr_20$model_1_posterior_prob,3)
+  ),
+  "Model 2 Posterior Probability" = c(
+    round(model_postr_100$model_2_posterior_prob,3),
+    round(model_postr_80$model_2_posterior_prob,3),
+    round(model_postr_50$model_2_posterior_prob,3),
+    round(model_postr_30$model_2_posterior_prob,3),
+    round(model_postr_20$model_2_posterior_prob,3)
+  ),
+  "Accepted Samples Model 1" = c(
+    round(model_postr_100$accepted_samples_model_1,3),
+    round(model_postr_80$accepted_samples_model_1,3),
+    round(model_postr_50$accepted_samples_model_1,3),
+    round(model_postr_30$accepted_samples_model_1,3),
+    round(model_postr_20$accepted_samples_model_1,3)
+  ),
+  "Accepted Samples Model 2" = c(
+    round(model_postr_100$accepted_samples_model_2,3),
+    round(model_postr_80$accepted_samples_model_2,3),
+    round(model_postr_50$accepted_samples_model_2,3),
+    round(model_postr_30$accepted_samples_model_2,3),
+    round(model_postr_20$accepted_samples_model_2,3)
+  )
+)
+
+# Convert the table to a data frame for better readability
+model_table <- as.data.frame(model_table)
+print(model_table)
+
+```
+
+Finally, we make bar plots for posterior probabilities of both models.
+
+
+```{r}
+par(mfrow = c(2, 3), mar = c(4, 4, 3, 2))
+
+# Define prior probabilities of both models as 0.5
+prior <- c(0.5, 0.5)
+
+# Plot prior
+barplot(
+  prior,
+  names.arg = c("Model 1", "Model 2"),
+  ylim = c(0, 1),
+  col = "beige",
+  main = "Prior",
+  ylab = "Probability"
+)
+
+# Define posterior probabilities
+model_postr <- list(
+  "100" = c(model_postr_100$model_1_posterior_prob, model_postr_100$model_2_posterior_prob),
+  "80" = c(model_postr_80$model_1_posterior_prob, model_postr_80$model_2_posterior_prob),
+  "50" = c(model_postr_50$model_1_posterior_prob, model_postr_50$model_2_posterior_prob),
+  "30" = c(model_postr_30$model_1_posterior_prob, model_postr_30$model_2_posterior_prob),
+  "20" = c(model_postr_20$model_1_posterior_prob, model_postr_20$model_2_posterior_prob)
+)
+
+# Plot posterior distributions
+for (epsilon in names(model_postr)) {
+  barplot(
+    model_postr[[epsilon]],
+    names.arg = c("Model 1", "Model 2"),
+    ylim = c(0, 1),
+    col = "beige",
+    main = paste("Epsilon =", epsilon),
+    ylab = "Posterior Probability"
+  )
+}
+
+```
+
+
+### 3-Parameter vs 4-Parameter models for different strain outbreaks
+
+Similarly, we write a function to compare the 3-parameter model (model 1) and the 4-parameter model (model 2) for the outbreaks of influenza A and influenza B strains. This section replicates the findings of Figure 3(b) from the Supplementary data.
+
+We again use a subset of the tolerance schedule used by the authors, namely $\epsilon = \{40, 20, 15, 10, 8\}$.
+
+
+```{r}
+# Function to calculate posterior model probabilities 
+# for model 1 (3-parameter) and model 2 (4-parameter) for Table 3
+calculate_model_postr2 <- function(given_data1, given_data2, epsilon, n_samples) {
+  
+  # Initialize counters for accepted samples
+  accepted_samples_model_1 <- 0
+  accepted_samples_model_2 <- 0
+  
+  for (i in 1:n_samples) {
+    
+    # Run the 3-parameter model (model 1)
+    
+    q_model_1 <- prior_distribution_3()
+    
+    q_c11 <- q_model_1[1]
+    q_c12 <- q_model_1[2]
+    q_h <- q_model_1[3]
+        
+    household_size11 <- ncol(given_data1)
+    n_households11 <- colSums(given_data1)
+        
+    simulated_data11 <- simulate_household_data(q_c11, q_h, household_size11, n_households11)
+        
+    household_size12 <- ncol(given_data2)
+    n_households12 <- colSums(given_data2)
+        
+    simulated_data12 <- simulate_household_data(q_c12, q_h, household_size12, n_households12)
+    
+    if (distance(given_data1, given_data2, simulated_data11, simulated_data12) < epsilon) {
+      accepted_samples_model_1 <- accepted_samples_model_1 + 1
+    }
+    
+    # Run the 4-parameter model (model 2)
+    
+    q_model_2 <- prior_distribution()
+    
+    q_c21 <- q_model_2[1]
+    q_h21 <- q_model_2[2]
+    q_c22 <- q_model_2[3]
+    q_h22 <- q_model_2[4]
+    
+    
+    household_size21 <- ncol(given_data1)
+    n_households21 <- colSums(given_data1)
+        
+    simulated_data21 <- simulate_household_data(q_c21, q_h21, household_size21, n_households21)
+        
+    household_size22 <- ncol(given_data2)
+    n_households22 <- colSums(given_data2)
+        
+    simulated_data22 <- simulate_household_data(q_c22, q_h22, household_size22, n_households22)
+
+    
+    if (distance(given_data1, given_data2, simulated_data21, simulated_data22) < epsilon) {
+      accepted_samples_model_2 <- accepted_samples_model_2 + 1
+    }
+    
+  }
+  
+  
+  # Calculate the posterior probabilities for both models
+  
+  total_accepted_samples <- accepted_samples_model_1 + accepted_samples_model_2
+  
+  if (total_accepted_samples == 0) {
+    stop("No samples were accepted for either model. Adjust epsilon or check your data.")
+  }
+  
+  posterior_prob_model_1 <- accepted_samples_model_1 / total_accepted_samples
+  posterior_prob_model_2 <- accepted_samples_model_2 / total_accepted_samples
+  
+  return(list(model_1_posterior_prob = posterior_prob_model_1,
+              model_2_posterior_prob = posterior_prob_model_2,
+              accepted_samples_model_1 = accepted_samples_model_1,
+              accepted_samples_model_2 = accepted_samples_model_2))
+}
+
+```
+
+
+```{r, include=FALSE, echo = FALSE, results='hide'}
+# Save Model_postr as rds on your local machine before running this
+# saveRDS(Model_postr_40, "2Model_postr_40.rds")
+# saveRDS(Model_postr_20, "2Model_postr_20.rds")
+# saveRDS(Model_postr_15, "2Model_postr_15.rds")
+# saveRDS(Model_postr_10, "2Model_postr_10.rds")
+# saveRDS(Model_postr_8, "2Model_postr_8.rds")
+Model_postr_40 <- readRDS("2Model_postr_40.rds")
+Model_postr_20 <- readRDS("2Model_postr_20.rds")
+Model_postr_15 <- readRDS("2Model_postr_15.rds")
+Model_postr_10 <- readRDS("2Model_postr_10.rds")
+Model_postr_8 <- readRDS("2Model_postr_8.rds")
+```
+
+Here we approximate posterior probabilities for the models using 1000 iterations and tolerance levels from our tolerance schedule.
+
+```{r long-computation-6, eval=FALSE}
+Model_postr_40 <- calculate_model_postr2(given_data3, given_data4, epsilon = 40, n_samples = 1000)
+
+Model_postr_20 <- calculate_model_postr2(given_data3, given_data4, epsilon = 20, n_samples = 1000)
+
+Model_postr_15 <- calculate_model_postr2(given_data3, given_data4, epsilon = 15, n_samples = 1000)
+
+Model_postr_10 <- calculate_model_postr2(given_data3, given_data4, epsilon = 10, n_samples = 1000)
+
+Model_postr_8 <- calculate_model_postr2(given_data3, given_data4, epsilon = 8, n_samples = 1000)
+```
+
+Here are the outputs from the above code in a dataframe form for easy readability. We don't display the code for it, but it can be found in our RMD file. 
+
+
+```{r, echo = FALSE}
+# Create a table using cbind
+model_table2 <- cbind(
+  "n_samples = 1000" = c(
+    "epsilon = 40",
+    "epsilon = 20",
+    "epsilon = 15",
+    "epsilon = 10",
+    "epsilon = 8"
+  ),
+  "Model 1 Posterior Probability" = c(
+    round(Model_postr_40$model_1_posterior_prob,3),
+    round(Model_postr_20$model_1_posterior_prob,3),
+    round(Model_postr_15$model_1_posterior_prob,3),
+    round(Model_postr_10$model_1_posterior_prob,3),
+    round(Model_postr_8$model_1_posterior_prob,3)
+  ),
+  "Model 2 Posterior Probability" = c(
+    round(Model_postr_40$model_2_posterior_prob,3),
+    round(Model_postr_20$model_2_posterior_prob,3),
+    round(Model_postr_15$model_2_posterior_prob,3),
+    round(Model_postr_10$model_2_posterior_prob,3),
+    round(Model_postr_8$model_2_posterior_prob,3)
+  ),
+  "Accepted Samples Model 1" = c(
+    round(Model_postr_40$accepted_samples_model_1,3),
+    round(Model_postr_20$accepted_samples_model_1,3),
+    round(Model_postr_15$accepted_samples_model_1,3),
+    round(Model_postr_10$accepted_samples_model_1,3),
+    round(Model_postr_8$accepted_samples_model_1,3)
+  ),
+  "Accepted Samples Model 2" = c(
+    round(Model_postr_40$accepted_samples_model_2,3),
+    round(Model_postr_20$accepted_samples_model_2,3),
+    round(Model_postr_15$accepted_samples_model_2,3),
+    round(Model_postr_10$accepted_samples_model_2,3),
+    round(Model_postr_8$accepted_samples_model_2,3)
+  )
+)
+
+# Convert the table to a data frame for better readability
+model_table2 <- as.data.frame(model_table2)
+print(model_table2)
+
+```
+
+Finally, we make bar plots for posterior probabilities of both models.
+
+```{r}
+par(mfrow = c(2, 3), mar = c(4, 4, 3, 2))
+
+# Define prior probabilities of both models as 0.5
+prior <- c(0.5, 0.5)
+
+# Plot prior
+barplot(
+  prior,
+  names.arg = c("Model 1", "Model 2"),
+  ylim = c(0, 1),
+  col = "beige",
+  main = "Prior",
+  ylab = "Probability"
+)
+
+# Define posterior probabilities
+model_postr2 <- list(
+  "40" = c(Model_postr_40$model_1_posterior_prob, Model_postr_40$model_2_posterior_prob),
+  "20" = c(Model_postr_20$model_1_posterior_prob, Model_postr_20$model_2_posterior_prob),
+  "15" = c(Model_postr_15$model_1_posterior_prob, Model_postr_15$model_2_posterior_prob),
+  "10" = c(Model_postr_10$model_1_posterior_prob, Model_postr_10$model_2_posterior_prob),
+  "8" = c(Model_postr_8$model_1_posterior_prob, Model_postr_8$model_2_posterior_prob)
+)
+
+# Plot posterior distributions
+for (epsilon in names(model_postr2)) {
+  barplot(
+    model_postr2[[epsilon]],
+    names.arg = c("Model 1", "Model 2"),
+    ylim = c(0, 1),
+    col = "beige",
+    main = paste("Epsilon =", epsilon),
+    ylab = "Posterior Probability"
+  )
+}
+
+```
+
+
 ## Conclusion 
-Here we replicate some of the results proposed by Toni and Stumpf. In particular, we are able to reproduce figure 3. The 4 parameter model proposed in [1] gives a good way of telling whether the ABC procedure gives the same parameters for modeling two different outbreaks. From this, we conclude that outbreaks of the same strain of influenza are best modeled by a 2 parameter model and that outbreaks from different strains of influenza are best modeled by a 3 parameter model which accounts for differences in $q_c$ while leaving $q_h$ constant.
+
+Here we replicate some of the results proposed by Toni and Stumpf. In particular, we are able to reproduce figure 3. The 4-parameter model proposed in [1] gives a good way of telling whether the ABC procedure gives the same parameters for modeling two different outbreaks. From this, we conclude that outbreaks of the same strain of influenza are best modeled by a 2-parameter model and that outbreaks from different strains of influenza are best modeled by a 3-parameter model which accounts for differences in $q_c$ while leaving $q_h$ constant.
 
 ## Appendix : Function Tests
 
@@ -860,8 +1307,6 @@ test_that("generate_abc_sample throws errors for bad parameters", {
                     prior_distribution, simulate_household_data, epsilon = -1)) # negative epsilon
   expect_error(generate_abc_sample(given_data3, given_data4, distance, 
                     prior_distribution, simulate_household_data, epsilon = 0)) # zero epsilon
-  expect_error(generate_abc_sample(given_data3, given_data4, distance, 
-                    prior_distribution = c(1,2,3), simulate_household_data, epsilon = 20)) # wrong size prior_distribution
 })
 
 ```
@@ -898,7 +1343,7 @@ test_that("distance works on simple cases",{
 ### Tests for generate_abc_sample_2
 
 ```{r}
-# Tests for generate_abc_sample
+# Tests for generate_abc_sample_2
 
 library(testthat)
 
@@ -908,8 +1353,6 @@ test_that("generate_abc_sample throws errors for bad parameters", {
                     prior_distribution_2, simulate_household_data, epsilon = -1)) # negative epsilon
   expect_error(generate_abc_sample_2(given_data1, distance_2, 
                     prior_distribution_2, simulate_household_data, epsilon = 0)) # zero epsilon
-  expect_error(generate_abc_sample_2(given_data1, distance_2, 
-                    prior_distribution = c(1,2,3), simulate_household_data, epsilon = 20)) # wrong size prior_distribution
 })
 
 ```
@@ -927,12 +1370,11 @@ test_that("generate_abc_sample throws errors for bad parameters", {
                     prior_distribution_3, simulate_household_data, epsilon = -1)) # negative epsilon
   expect_error(generate_abc_sample_3(given_data1, given_data2, distance, 
                     prior_distribution_3, simulate_household_data, epsilon = 0)) # zero epsilon
-  expect_error(generate_abc_sample_3(given_data1, given_data2, distance, 
-                    prior_distribution = c(1,2), simulate_household_data, epsilon = 20)) # wrong size prior_distribution
 })
 
 ```
 
+**Note:** Tests for the functions `calculate_model_postr` and `calculate_model_postr2` are not included but can be performed in a similar manner as the tests for `generate_abc_sample` functions.
 
 ## Bibliography
 
