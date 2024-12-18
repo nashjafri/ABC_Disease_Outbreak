@@ -524,8 +524,8 @@ Using this data set, we can use the 2 parameter functions from above to generate
 ```
 
 ```{r long-computation-3, eval=FALSE}
-combined_influenza_posterior_samples <- replicate(n = 100, generate_abc_sample_2(combined_influenza_data, distance_2,
-                        prior_distribution_2, simulate_household_data, epsilon = 15))
+#combined_influenza_posterior_samples <- replicate(n = 100, generate_abc_sample_2(combined_influenza_data, distance_2,
+                        #prior_distribution_2, simulate_household_data, epsilon = 15))
 ```
 
 
@@ -568,10 +568,6 @@ print(paste("Mean q_c is", round(influenza_a_q_c,4) , "and mean q_h is" , round(
   
 ```
 
-
-```{r}
-median(combined_influenza_posterior_samples[1,])
-```
 
 ## Three Parameter Model
 
@@ -707,7 +703,7 @@ legend("bottomleft",
 ```
 
 ## Conclusion 
-xxxxxxxxxx
+Here we replicate some of the results proposed by Toni and Stumpf. In particular, we are able to reproduce figure 3. The 4 parameter model proposed in [1] gives a good way of telling whether the ABC procedure gives the same parameters for modeling two different outbreaks. From this, we conclude that outbreaks of the same strain of influenza are best modeled by a 2 parameter model and that outbreaks from different strains of influenza are best modeled by a 3 parameter model which accounts for differences in $q_c$ while leaving $q_h$ constant.
 
 ## Appendix : Function Tests
 
@@ -870,8 +866,72 @@ test_that("generate_abc_sample throws errors for bad parameters", {
 
 ```
 
+### Tests for two parameter distance
 
+```{r}
+# Tests for distance_2
 
+library(testthat)
+
+test_that("distance_2 throws error for bad parameters", {
+  size1 = matrix(1, nrow=1)
+  size2 = matrix(c(2,2,2,2), nrow =2)
+  
+  expect_error(distance_2(size1, size2))   # Given_data and simulated_data have different sizes
+})
+
+test_that("distance works on simple cases: distance between given data and simulated data is 0 when given and simulated data are identical",{
+  data_1 <- matrix(c(1,1,1,1), nrow=2)
+  
+  expect_equivalent(distance_2(data_1, data_1), 0)
+})
+
+test_that("distance works on simple cases",{
+  given_data <- matrix(c(1,1,1,1), nrow=2)
+  simulated_data <- matrix(c(0,0,0,0), nrow = 2)
+  
+  expect_equivalent(distance_2(given_data, simulated_data), 2)
+})
+
+```
+
+### Tests for generate_abc_sample_2
+
+```{r}
+# Tests for generate_abc_sample
+
+library(testthat)
+
+test_that("generate_abc_sample throws errors for bad parameters", {
+  
+  expect_error(generate_abc_sample_2(given_data1, distance_2, 
+                    prior_distribution_2, simulate_household_data, epsilon = -1)) # negative epsilon
+  expect_error(generate_abc_sample_2(given_data1, distance_2, 
+                    prior_distribution_2, simulate_household_data, epsilon = 0)) # zero epsilon
+  expect_error(generate_abc_sample_2(given_data1, distance_2, 
+                    prior_distribution = c(1,2,3), simulate_household_data, epsilon = 20)) # wrong size prior_distribution
+})
+
+```
+
+### Tests for generate_abc_sample_3
+
+```{r}
+# Tests for generate_abc_sample_3
+
+library(testthat)
+
+test_that("generate_abc_sample throws errors for bad parameters", {
+  
+  expect_error(generate_abc_sample_3(given_data1, given_data2, distance, 
+                    prior_distribution_3, simulate_household_data, epsilon = -1)) # negative epsilon
+  expect_error(generate_abc_sample_3(given_data1, given_data2, distance, 
+                    prior_distribution_3, simulate_household_data, epsilon = 0)) # zero epsilon
+  expect_error(generate_abc_sample_3(given_data1, given_data2, distance, 
+                    prior_distribution = c(1,2), simulate_household_data, epsilon = 20)) # wrong size prior_distribution
+})
+
+```
 
 
 ## Bibliography
