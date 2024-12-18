@@ -943,7 +943,7 @@ for (epsilon in names(model_postr)) {
 
 ### 3-Parameter vs 4-Parameter models for different strain outbreaks
 
-Similarly, we write a function to compare the 3-parameter model (model 1) and the 4-parameter model (model 2) for the outbreaks of influenza A and influenza B strains. This section replicates the findings of Figure 3(b) from the Supplementary data.
+Similarly, we write a function to compare the 3-parameter model (model 1) and the 4-parameter model (model 2) for the outbreaks of influenza A and influenza B strains. This section replicates the findings of Figure 1(b) from the Supplementary data.
 
 We again use a subset of the tolerance schedule used by the authors, namely $\epsilon = \{40, 20, 15, 10, 8\}$.
 

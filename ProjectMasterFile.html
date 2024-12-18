@@ -505,11 +505,11 @@ n_households &lt;- c(79, 105, 48, 44, 11)    # Number of households (same as obs
 simulated_data &lt;- simulate_household_data(q_c, q_h, household_size, n_households)
 print(simulated_data)</code></pre>
 <pre><code>##                  s = 1 s = 2 s = 3 s = 4 s = 5
-## (Infected) j = 0    61    64    24    15     4
-## (Infected) j = 1    18    19    11     3     1
-## (Infected) j = 2     0    22     3     6     0
-## (Infected) j = 3     0     0    10     7     1
-## (Infected) j = 4     0     0     0    13     1
+## (Infected) j = 0    59    74    24    16     3
+## (Infected) j = 1    20    18     9     1     0
+## (Infected) j = 2     0    13     9     8     0
+## (Infected) j = 3     0     0     6    10     2
+## (Infected) j = 4     0     0     0     9     2
 ## (Infected) j = 5     0     0     0     0     4</code></pre>
 </div>
 <div id="similarity-measure-between-the-simulated-and-observed-data" class="section level3">
@@ -688,7 +688,7 @@ q_{c2}, q_{h2})\)</span>.</p>
 # Generating one posterior sample
 generate_abc_sample(given_data1, given_data2, distance,
                         prior_distribution, simulate_household_data, epsilon = 15)</code></pre>
-<pre><code>## [1] 0.8914152 0.7893706 0.9028454 0.7110472</code></pre>
+<pre><code>## [1] 0.8462077 0.8488391 0.9097727 0.9928907</code></pre>
 <p>The code below produces 100 parameter samples that are accepted by
 the algorithm with <span class="math inline">\(\epsilon = 15\)</span>.
 This is a computationally expensive process and took about 2 hours to
@@ -772,7 +772,7 @@ level.</p>
 
 generate_abc_sample(given_data3, given_data4, distance, 
                     prior_distribution, simulate_household_data, epsilon = 7)</code></pre>
-<pre><code>## [1] 0.9247002 0.8881285 0.5960779 0.5750763</code></pre>
+<pre><code>## [1] 0.8727153 0.7707053 0.5652377 0.5371828</code></pre>
 <p>The code below produces 200 parameter samples that are accepted by
 the algorithm with <span class="math inline">\(\epsilon =
 7\)</span>.</p>
@@ -1231,7 +1231,7 @@ outbreaks</h3>
 <p>Similarly, we write a function to compare the 3-parameter model
 (model 1) and the 4-parameter model (model 2) for the outbreaks of
 influenza A and influenza B strains. This section replicates the
-findings of Figure 3(b) from the Supplementary data.</p>
+findings of Figure 1(b) from the Supplementary data.</p>
 <p>We again use a subset of the tolerance schedule used by the authors,
 namely <span class="math inline">\(\epsilon = \{40, 20, 15, 10,
 8\}\)</span>.</p>
@@ -1402,7 +1402,7 @@ test_that(&quot;W_js_matrix throws error for bad parameters&quot;, {
   expect_error(W_js_matrix(2, 0.9, 3))           # q_c &gt; 1
   expect_error(W_js_matrix(0.3, 0.2, -7))        # household_size not a positive integer
 })</code></pre>
-<pre><code>## Test passed 😸</code></pre>
+<pre><code>## Test passed 🥳</code></pre>
 <pre class="r"><code>test_that(&quot;W_js_matrix works for simple cases&quot;, {
   # q_h = q_c = 0 
   W0 &lt;- W_js_matrix(0,0,3)
@@ -1421,7 +1421,7 @@ test_that(&quot;W_js_matrix throws error for bad parameters&quot;, {
                          0,0,0,0), ncol = 4, byrow = T)
   expect_equivalent(W1, expected_W1)            # W1 has rownames and colnames, while expected_W1 does not
 })</code></pre>
-<pre><code>## Test passed 🎉</code></pre>
+<pre><code>## Test passed 😸</code></pre>
 <pre class="r"><code>test_that(&quot;W_js_matrix columns sum to 1&quot;, {
   for (i in 1:100) {                            # Test for 100 random cases
     q_c &lt;- runif(1, 0, 1)                       # Choose q_c randomly between 0 and 1
@@ -1433,7 +1433,7 @@ test_that(&quot;W_js_matrix throws error for bad parameters&quot;, {
     expect_equivalent(colSums(W), rep(1, ncol(W)))   
   }
 })</code></pre>
-<pre><code>## Test passed 😸</code></pre>
+<pre><code>## Test passed 🥳</code></pre>
 </div>
 <div id="tests-for-simulate_household_data" class="section level3">
 <h3>Tests for simulate_household_data</h3>
@@ -1446,14 +1446,14 @@ test_that(&quot;simulate_household_data throws error for bad parameters&quot;, {
   expect_error(simulate_household_data(1.4, 0.8, 4, c(12,10,6,3)))  # q_c &gt; 1
   expect_error(simulate_household_data(0.3, 0.4, 6, c(100,90,8)))   # length(n_households) != household_size 
 })</code></pre>
-<pre><code>## Test passed 😸</code></pre>
+<pre><code>## Test passed 🌈</code></pre>
 <pre class="r"><code>test_that(&quot;simulate_household_data works for simple cases&quot;, {
   # 0 number of households for household size 3 should return third column 0
   data.0 &lt;- simulate_household_data(0.1, 0.8, 4, c(12,8,0,10))
 
   expect_equivalent(data.0[,3], rep(0,nrow(data.0)))  
 })</code></pre>
-<pre><code>## Test passed 😀</code></pre>
+<pre><code>## Test passed 🌈</code></pre>
 <pre class="r"><code>test_that(&quot;simulate_household_data doesn&#39;t have more infected than susceptible&quot;, {
   q_c &lt;- runif(1, 0, 1)                          # Choose q_c randomly between 0 and 1
   q_h &lt;- runif(1, 0, 1)                          # Choose q_h randomly between 0 and 1
@@ -1471,7 +1471,7 @@ test_that(&quot;simulate_household_data throws error for bad parameters&quot;, {
     }
   }
 })</code></pre>
-<pre><code>## Test passed 🎉</code></pre>
+<pre><code>## Test passed 🌈</code></pre>
 </div>
 <div id="tests-for-frobenius-norm" class="section level3">
 <h3>Tests for Frobenius norm</h3>
@@ -1485,7 +1485,7 @@ test_that(&quot;frobenius_norm works on simple cases: zero matrix&quot;,{
   
   expect_equivalent(frobenius_norm(zero_matrix), 0)
 })</code></pre>
-<pre><code>## Test passed 🌈</code></pre>
+<pre><code>## Test passed 🎉</code></pre>
 <pre class="r"><code>test_that(&quot;frobenius_norm works on simple cases: c(1,2,0,-2)&quot;,{
   # Checks that the Frobenius norm is 3 on this simple case
   example_matrix &lt;-matrix(c(1,2,0,-2), nrow=2)
@@ -1507,14 +1507,14 @@ test_that(&quot;distance throws error for bad parameters&quot;, {
   expect_error(distance(size1, size1, size2, size1))   # Given_data_1 and simulated_data_1 have different sizes
   expect_error(distance(size1, size1, size1, size2))  # Given_data_2 and simulated_data_2 have different sizes
 })</code></pre>
-<pre><code>## Test passed 🎊</code></pre>
+<pre><code>## Test passed 🎉</code></pre>
 <pre class="r"><code>test_that(&quot;distance works on simple cases: distance between given data and simulated data is 0 when given and simulated data are identical&quot;,{
   data_1 &lt;- matrix(c(1,1,1,1), nrow=2)
   data_2 &lt;- matrix(c(2,2,2,2), nrow=2)
   
   expect_equivalent(distance(data_1, data_2, data_1, data_2), 0)
 })</code></pre>
-<pre><code>## Test passed 🌈</code></pre>
+<pre><code>## Test passed 🎊</code></pre>
 <pre class="r"><code>test_that(&quot;distance works on simple cases&quot;,{
   given_data_1 &lt;- matrix(c(1,1,1,1), nrow=2)
   given_data_2 &lt;- matrix(c(2,2,2,2), nrow=2)
@@ -1522,7 +1522,7 @@ test_that(&quot;distance throws error for bad parameters&quot;, {
   
   expect_equivalent(distance(given_data_1, given_data_2, simulated_data_both,  simulated_data_both), 3)
 })</code></pre>
-<pre><code>## Test passed 🎊</code></pre>
+<pre><code>## Test passed 🥇</code></pre>
 </div>
 <div id="tests-for-generate_abc_sample" class="section level3">
 <h3>Tests for generate_abc_sample</h3>
@@ -1537,7 +1537,7 @@ test_that(&quot;generate_abc_sample throws errors for bad parameters&quot;, {
   expect_error(generate_abc_sample(given_data3, given_data4, distance, 
                     prior_distribution, simulate_household_data, epsilon = 0)) # zero epsilon
 })</code></pre>
-<pre><code>## Test passed 🎉</code></pre>
+<pre><code>## Test passed 🎊</code></pre>
 </div>
 <div id="tests-for-two-parameter-distance" class="section level3">
 <h3>Tests for two parameter distance</h3>
@@ -1551,20 +1551,20 @@ test_that(&quot;distance_2 throws error for bad parameters&quot;, {
   
   expect_error(distance_2(size1, size2))   # Given_data and simulated_data have different sizes
 })</code></pre>
-<pre><code>## Test passed 😸</code></pre>
+<pre><code>## Test passed 🌈</code></pre>
 <pre class="r"><code>test_that(&quot;distance works on simple cases: distance between given data and simulated data is 0 when given and simulated data are identical&quot;,{
   data_1 &lt;- matrix(c(1,1,1,1), nrow=2)
   
   expect_equivalent(distance_2(data_1, data_1), 0)
 })</code></pre>
-<pre><code>## Test passed 😸</code></pre>
+<pre><code>## Test passed 🥳</code></pre>
 <pre class="r"><code>test_that(&quot;distance works on simple cases&quot;,{
   given_data &lt;- matrix(c(1,1,1,1), nrow=2)
   simulated_data &lt;- matrix(c(0,0,0,0), nrow = 2)
   
   expect_equivalent(distance_2(given_data, simulated_data), 2)
 })</code></pre>
-<pre><code>## Test passed 🥳</code></pre>
+<pre><code>## Test passed 🌈</code></pre>
 </div>
 <div id="tests-for-generate_abc_sample_2" class="section level3">
 <h3>Tests for generate_abc_sample_2</h3>
@@ -1579,7 +1579,7 @@ test_that(&quot;generate_abc_sample throws errors for bad parameters&quot;, {
   expect_error(generate_abc_sample_2(given_data1, distance_2, 
                     prior_distribution_2, simulate_household_data, epsilon = 0)) # zero epsilon
 })</code></pre>
-<pre><code>## Test passed 🎉</code></pre>
+<pre><code>## Test passed 😸</code></pre>
 </div>
 <div id="tests-for-generate_abc_sample_3" class="section level3">
 <h3>Tests for generate_abc_sample_3</h3>
@@ -1594,7 +1594,7 @@ test_that(&quot;generate_abc_sample throws errors for bad parameters&quot;, {
   expect_error(generate_abc_sample_3(given_data1, given_data2, distance, 
                     prior_distribution_3, simulate_household_data, epsilon = 0)) # zero epsilon
 })</code></pre>
-<pre><code>## Test passed 😸</code></pre>
+<pre><code>## Test passed 🎊</code></pre>
 <p><strong>Note:</strong> Tests for the functions
 <code>calculate_model_postr</code> and
 <code>calculate_model_postr2</code> are not included but can be
