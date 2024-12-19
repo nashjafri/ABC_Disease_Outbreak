@@ -16,7 +16,9 @@ fontsize: 11pt
 
 In this project, we apply ABC to fit parameters in a model for influenza A and B strains, based on data from past outbreaks in Michigan and Seattle. The process involves drawing parameters from prior uniform distribution, simulating data based on those parameters, computing a similarity measure between simulated and observed data, and iteratively refining the parameter estimates. 
 
-**Objective**: The objective of this project is to replicate the model selection results presented in Section 3.3 of Tony and Stumpf's paper, "[Simulation-based model selection for dynamical systems in systems and population biology](https://watermark.silverchair.com/bioinformatics_26_1_104.pdf?token=AQECAHi208BE49Ooan9kkhW_Ercy7Dm3ZL_9Cf3qfKAc485ysgAAA3swggN3BgkqhkiG9w0BBwagggNoMIIDZAIBADCCA10GCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMjV15kHzFknWstbVZAgEQgIIDLvGZcFAgMxJ2FtxTGrsPvkAoO-imsFvwyY2RJRbPWpz_WYOR3ZYIIXnJpmCp_pOOlhB9fGwvPCCBNkFN7jjQvo-jtSs3vYGT9U9ABO1ngcGxGq0M_-xfz5QDNcfLJpdHphXjvXPmNQKw-FbmW7Z-lM4VADhWgRMXeAa69IcQWbf3O3M4YVlAfOhNibTRLt8QLpayutZlbZAwX6aC2a13wmjnKF6Vx3WJWazbewssqJov9CmNXprFKUqnhcq1QLZ4oaGSKYaxVFpmwB2ZylzUBbliQ3fYN6VRAfleLXrmyvOymid2GtXNnhrslyx6SN2OSgbXU0YIgfSgCk5OaCETsFY7VMGzLCuUTB776n6hDJKcZ-Hb7RelIJxLeOZteaxRVOiu-a9pG5NbQQuueQtS0C-kqHlVksEwUAucqzS9UXX3ucvmsIgYK-jQQ8jmtqPTjVkdFGhR1J3LzOw7VJCJQy4b_a_WZLDNS7bskxvvZgU7DOZAVHxYu1aPUHh3UaeJ-5oMwJ-sqFWg_6ZruUPk4L9f1KB1siRgSmxw-Eo4JHKXjSEsIXAylD3m_trgxEIxkeqgXFJ867U-qJxeG39ToS9BptAG_IGK-HfMD0ovPK9mKHXvrp32fRO5S0oiqaCMa8kV4DGwbZjaMArJDV9Ps3WNw_EE2E8m7J4UjiqLNQkihUtUM6d4xmJ-S4zo-qPJkr0ajWkDhQwkeJ1wsaYGXItivcoAB4lzyQmG3Zs5kQQIIa2m4hveEf2mDlglHMoPHTAN5hGG-9_LegexhFcKAZTguF4nNpozqAVsIQaj8DeAaHWY8AvjP5HjDTgYHs4ni3w7EjULGDSroFhBndTpCAMNjtY9yIqoh248Bf7ayWtBCXUx1yJyIamAPGeHej3nPnf80TACr2Of6fJicQ-hFcdVGzQj8qiq8b9GuOFFJ43SnZudftdAwwlA0mQb30ZhvgJvsYngGY752-NegVEd2F_r6N2Jkw-G-fzEnoObf6OXzGaYlNSq4_s4vGnQ38HGe_HPk7fdDIESUA35j1SbK5K83274IWvReND0Byubb2MmgZ4fJ90sCCKnjLeu9ho)" and demonstrate how ABC can be used to estimate model parameters for complex epidemic models. In particular, we recreate Figures 3(a) and 3(c) using a 4 parameter model on two sets of observed data - Table 2 (Addy et al., 1991) and Table 3 (Longini and Koopman, 1982) from the [Supplementary Data](https://academic.oup.com/bioinformatics/article/26/1/104/182571).
+We focus on the 4-parameter model with parameters $(q_{c1}, q_{h1}, q_{c2}, q_{h2})$, which represents the hypothesis that each outbreak has its own infection avoidance rates. Later, we compare this model to a 2-parameter model with parameters $(q_c, q_h)$ for the two outbreaks of the same strain of virus (influenza A in Tecumseh, Michigan [3]). The 2-parameter model hypothesizes that outbreaks of the same virus in a given region have same infection avoidance rates. Finally, we also compare the 4-parameter model to a 3-parameter model with parameters $(q_{c1}, q_{c2}, q_h)$ for the outbreaks of different strains of virus (influenza A and influenza B in Seattle, Washington [4]). The 3-parameter model assumes that outbreaks of different viruses in a given region have same household infection avoidance rates, but different community infection avoidance rates. 
+
+**Objective**: The objective of this project is to replicate the model selection results presented in Section 3.3 of Tony and Stumpf's paper, "[Simulation-based model selection for dynamical systems in systems and population biology](https://watermark.silverchair.com/bioinformatics_26_1_104.pdf?token=AQECAHi208BE49Ooan9kkhW_Ercy7Dm3ZL_9Cf3qfKAc485ysgAAA3swggN3BgkqhkiG9w0BBwagggNoMIIDZAIBADCCA10GCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMjV15kHzFknWstbVZAgEQgIIDLvGZcFAgMxJ2FtxTGrsPvkAoO-imsFvwyY2RJRbPWpz_WYOR3ZYIIXnJpmCp_pOOlhB9fGwvPCCBNkFN7jjQvo-jtSs3vYGT9U9ABO1ngcGxGq0M_-xfz5QDNcfLJpdHphXjvXPmNQKw-FbmW7Z-lM4VADhWgRMXeAa69IcQWbf3O3M4YVlAfOhNibTRLt8QLpayutZlbZAwX6aC2a13wmjnKF6Vx3WJWazbewssqJov9CmNXprFKUqnhcq1QLZ4oaGSKYaxVFpmwB2ZylzUBbliQ3fYN6VRAfleLXrmyvOymid2GtXNnhrslyx6SN2OSgbXU0YIgfSgCk5OaCETsFY7VMGzLCuUTB776n6hDJKcZ-Hb7RelIJxLeOZteaxRVOiu-a9pG5NbQQuueQtS0C-kqHlVksEwUAucqzS9UXX3ucvmsIgYK-jQQ8jmtqPTjVkdFGhR1J3LzOw7VJCJQy4b_a_WZLDNS7bskxvvZgU7DOZAVHxYu1aPUHh3UaeJ-5oMwJ-sqFWg_6ZruUPk4L9f1KB1siRgSmxw-Eo4JHKXjSEsIXAylD3m_trgxEIxkeqgXFJ867U-qJxeG39ToS9BptAG_IGK-HfMD0ovPK9mKHXvrp32fRO5S0oiqaCMa8kV4DGwbZjaMArJDV9Ps3WNw_EE2E8m7J4UjiqLNQkihUtUM6d4xmJ-S4zo-qPJkr0ajWkDhQwkeJ1wsaYGXItivcoAB4lzyQmG3Zs5kQQIIa2m4hveEf2mDlglHMoPHTAN5hGG-9_LegexhFcKAZTguF4nNpozqAVsIQaj8DeAaHWY8AvjP5HjDTgYHs4ni3w7EjULGDSroFhBndTpCAMNjtY9yIqoh248Bf7ayWtBCXUx1yJyIamAPGeHej3nPnf80TACr2Of6fJicQ-hFcdVGzQj8qiq8b9GuOFFJ43SnZudftdAwwlA0mQb30ZhvgJvsYngGY752-NegVEd2F_r6N2Jkw-G-fzEnoObf6OXzGaYlNSq4_s4vGnQ38HGe_HPk7fdDIESUA35j1SbK5K83274IWvReND0Byubb2MmgZ4fJ90sCCKnjLeu9ho)" and demonstrate how ABC can be used to estimate model parameters for complex epidemic models. In particular, we recreate Figures 3(a) and 3(c) using a 4 parameter model on two sets of observed data - Table 2 (Addy et al., 1991) and Table 3 (Longini and Koopman, 1982) from the [Supplementary Data](https://academic.oup.com/bioinformatics/article/26/1/104/182571). We also recreate Figures 1(a) and 1(b) from the Supplementary Data.
 
 ## The 4-parameter model
 
@@ -25,7 +27,7 @@ Let $q_c$ denote the probability that a susceptible individual does not get infe
 $$w_{js} = \binom{s}{j}w_{jj}(q_cq_h^j)^{s-j}\, \, , s = 1,2,\dots \, \, , j = 0, 1, \dots , s$$
 where $w_{0s} = q_c^s$ for $s = 0,1,2,\dots$ and $w_{ss} = 1 - \sum_{j = 0}^{s-1}w_{js}$.
 
-We aim to infer the pair of parameters, $q_h$ and $q_c$, from the model using data from Supplementary Tables 2 and 3. In this project, we focus on the 4-parameter model with parameters $(q_{c1}, q_{h1}, q_{c2}, q_{h2})$, which represents the hypothesis that each outbreak has its own infection-transmission rates.
+We aim to infer the pair of parameters, $q_h$ and $q_c$, from the model using data from Supplementary Tables 2 and 3. 
 
 ### Prior distribution
 
@@ -33,10 +35,14 @@ Prior distributions of all parameters are chosen to be uniform over the range [0
 
 **Prior distribution:** $q_{c1}, q_{h1}, q_{c2}, q_{h2} \sim \text{Uniform}[0,1]$
 
-In the following code, we pick 4 independent parameters from the distribution Uniform[0,1]. This returns a vector of length 4, which we use to later extract parameters $q_{c1}, q_{h1}, q_{c2}, q_{h2}$.
+In the following code, we pick 4 independent parameters from the distribution Uniform[0,1]. This returns a named list of length 4, which we use to later extract parameters $q_{c1}, q_{h1}, q_{c2}, q_{h2}$. 
 
 ```{r}
-prior_distribution <- function() runif(n = 4, min = 0, max = 1)    
+prior_distribution <- function() {
+  parameters <- runif(n = 4, min = 0, max = 1)
+  names(parameters) <- c("q_c1", "q_h1", "q_c2", "q_h2")
+  as.list(parameters)
+}
 ```
 
 ### Probability distribution $w_{js}$ 
@@ -52,8 +58,10 @@ W_js_matrix <- function(q_c, q_h, household_size) {
     stop(paste("Invalid inputs:", "q_c =", q_c, "b =", q_h, "; Probabilities must be between 0 and 1."))
   }
   
-  nCol <- household_size      # Columns (susceptible individuals) indexed by s = 1,..., household_size
-  nRow <- household_size + 1  # Rows (infected individuals) indexed by j = 0, 1,..., s
+  # Columns (susceptible individuals) indexed by s = 1,..., household_size
+  nCol <- household_size      
+  # Rows (infected individuals) indexed by j = 0, 1,..., s
+  nRow <- household_size + 1  
   
   # Initialize a (zero) matrix to store the probabilities w_js
   w_js_matrix <- matrix(0, nrow = nRow , ncol = nCol)
@@ -92,15 +100,17 @@ simulate_household_data <- function(q_c, q_h, household_size, n_households) {
   
   w_js_matrix <- W_js_matrix(q_c, q_h, household_size)
   
-  nCol <- household_size      # Columns (susceptible individuals) indexed by s = 1,..., household_size
-  nRow <- household_size + 1  # Rows (infected individuals) indexed by j = 0, 1,..., s
+  # Columns (susceptible individuals) indexed by s = 1,..., household_size
+  nCol <- household_size   
+  # Rows (infected individuals) indexed by j = 0, 1,..., s
+  nRow <- household_size + 1 
   
   # Initialize a (zero) matrix to store the simulated data
   simulated_data <- matrix(0, nrow = nRow, ncol = nCol)
   
   for (s in 1:nCol) {                           
                                           
-    probabilities <- w_js_matrix[1:(s + 1), s]    # (j+1) corresponds to row j of w_js_matrix
+    probabilities <- w_js_matrix[1:(s + 1), s]  # (j+1) corresponds to row j of w_js_matrix
     
     # Simulate household infections using random sampling
     samples <- sample(0:s, size = n_households[s], replace = TRUE, prob = probabilities)
@@ -140,16 +150,19 @@ To apply ABC, we use the following distance function for observed and simulated 
 $$d(D_{obs}, D^*) = \cfrac{1}{2}\left(\|D_1−D^∗(q_{c1},q_{h1}) \|_F + \| D_2−D^∗(q_{c2},q_{h2}) \|_F \right) \, ,$$
 where 
 
-- $D_{obs} = D_1 \cup D_2$ with $D_1$ the 1977–1978 outbreak and $D_2$ the 1980–1981 outbreak datasets from Supplementary Table 2
+- $D_{obs} = D_1 \cup D_2$ with $D_1$ and $D_2$ the datasets from different outbreaks
+
 - $D^*$ is the simulated data
-- $\| \, \|_F$ denotes the Frobenius norm of a matrix defined by $\|A\|_F = \sqrt{\sum_{i,j}|a_{ij}|^2}$.
+
+- $\| \, . \|_F$ denotes the Frobenius norm of a matrix defined by $\|A\|_F = \sqrt{\sum_{i,j}|a_{ij}|^2}$.
 
 We define the said distance function that takes two pairs of observed and simulated data and returns the average Frobenius distance between them. 
 
 ```{r}
 frobenius_norm <- function(A) return(sqrt(sum(A^2)))
 
-distance <- function(given_data1, given_data2, simulated_data1, simulated_data2){
+avg_frob_distance <- function(given_data1, given_data2, simulated_data1, simulated_data2){
+  
   # Throw error if given_data1 and simulated_data1 aren't the same size
   if(ncol(given_data1)!=ncol(simulated_data1) || nrow(given_data1) != nrow(simulated_data1)){
     stop("Invalid inputs: given_data1 and simulated_data1 have different dimensions")
@@ -201,7 +214,9 @@ The ABC algorithm for this project is given below.
 
 #### Function to Generate Posterior Samples
 
-Next, we generate posterior samples by defining a function that takes the pair of observed data (given_data1, given_data2), a similarity measure (distance), a prior distribution for the parameter, a data-simulating function, and a tolerance level. This function returns a posterior sample of the parameter $q$ (in our case, the 4-parameter vector $(q_{c1}, q_{h1}, q_{c2}, q_{h2})$) that satisfies the tolerance condition for the distance between simulated and given data.
+Next, we generate posterior samples by defining a function that takes the pair of observed data (given_data1, given_data2), a similarity measure (distance), a prior distribution for the parameter, a data-simulating function, and a tolerance level. This function returns a posterior sample of the parameter $q$ that satisfies the tolerance condition for the distance between simulated and given data. 
+
+We also provide flexibility by allowing the user to define the `prior_distribution` function to return either a named list (with specific keys: q_c1, q_h1, q_c2, q_h2) or an unnamed vector of length 4, ensuring seamless handling of both formats. The returned output $q$ is a list or a vector, depending on what the user feeds as `prior_distribution`. By default, if a vector is fed, we choose the ordering to be q_c1, q_h1, q_c2, q_h2.
 
 ```{r}
 generate_abc_sample <- function(given_data1, given_data2,
@@ -219,14 +234,32 @@ generate_abc_sample <- function(given_data1, given_data2,
         q <- prior_distribution()
         
         # Throw error if prior_distribution is not of the right shape
-        if(as.double(length(q))!=4){
-          stop("Prior_distribution must have exactly 4 entries")
+        if(length(q)!=4){
+          stop("Prior_distribution must return either a list or a vector of length 4")
         }
       
-        q_c1 <- q[1]
-        q_h1 <- q[2]
-        q_c2 <- q[3]
-        q_h2 <- q[4]
+        # Handle both list and vector formats for q
+        if (is.list(q)) {
+            # Check that list elements are named correctly
+            required_names <- c("q_c1", "q_c2", "q_h1", "q_h2")
+            if (!setequal(required_names, names(q))) {
+                stop("Prior_distribution list must have names: q_c1, q_h1, q_c2, q_h2")
+            }
+            # Access elements by name
+            q_c1 <- q$q_c1
+            q_h1 <- q$q_h1
+            q_c2 <- q$q_c2
+            q_h2 <- q$q_h2
+        } else if (is.vector(q)) {
+            # Access elements by index
+            # Default ordering if given a vector (q_c1, q_h1, q_c2, q_h2)
+            q_c1 <- q[1]
+            q_h1 <- q[2]
+            q_c2 <- q[3]
+            q_h2 <- q[4]
+        } else {
+            stop("Prior_distribution must return either a list or a vector")
+        }
         
         household_size1 <- ncol(given_data1)
         n_households1 <- colSums(given_data1)
@@ -245,7 +278,7 @@ generate_abc_sample <- function(given_data1, given_data2,
 }
 ```
 
-### Observed Data (Table 2)
+### Influenza A outbreaks in Tecumseh, Michigan
 
 The following code stores the observed data from Table 2 of the Supplementary Material. 
 
@@ -269,59 +302,86 @@ given_data2 <- matrix(c(44, 62, 47, 38, 9,
 
 ```
 
-### Applying ABC to get posterior samples from Observed Data from Table 2
 
 #### Note about tolerance level $\epsilon$ 
 
 Before applying ABC to get sample parameters, we make a small note about what is considered a reasonable tolerance level. Our datasets represent counts of households with $s$ susceptible and $j$ infected individuals, structured as a 6×5 matrix. **By design, these counts are always integers**. Notably, 10 entries in each dataset are fixed to zero, corresponding to cases where $j>s$. The remaining 20 entries are randomly generated using the simulate_household_data function.
 
-Since both observed data and simulated data are 6×5 matrices with integer entries, and 10 of the entries are always zero, the Frobenius distance can be sensitive to small differences. For instance, if 5 of the 20 entries are identical and remaining 15 differ by only 1, the Frobenius distance becomes 15. This scale justifies setting $\epsilon = 15$ as a reasonable threshold, which is what we use to generate the posteriors.
+Since both observed data and simulated data are 6×5 matrices with integer entries, and 10 of the entries are always zero, the (unnormalized) Frobenius distance can be sensitive to small differences. For instance, if 5 of the 20 entries are identical and remaining 15 differ by only 1, the Frobenius distance becomes 15. This scale justifies setting $\epsilon = 15$ as a reasonable threshold, which is what we use to generate the posteriors. This choice also falls in the tolerance schedule used by Toni and Stumpf.
 
 Now we are ready to apply our ABC sample generating function to get posterior samples for $(q_{c1}, q_{h1}, q_{c2}, q_{h2})$.
 
 ```{r}
-prior_distribution <- function() runif(n = 4, min = 0, max = 1)     
-# Generating one posterior sample
-generate_abc_sample(given_data1, given_data2, distance,
-                        prior_distribution, simulate_household_data, epsilon = 15)
+prior_distribution_vector <- function() runif(n = 4, min = 0, max = 1)     
+
+# Generating one posterior sample as a vector, as prior_distribution_vector returns a vector
+
+generate_abc_sample(given_data1, given_data2, avg_frob_distance,
+                        prior_distribution_vector, simulate_household_data, epsilon = 20)
 ```
 
-The code below produces 100 parameter samples that are accepted by the algorithm with $\epsilon = 15$. This is a computationally expensive process and took about 2 hours to run on RStudio.
+```{r}
+prior_distribution_list <- function() {
+  parameters <- runif(n = 4, min = 0, max = 1)
+  names(parameters) <- c("q_c1", "q_h1", "q_c2", "q_h2")
+  as.list(parameters)
+}  
+
+# Generating one posterior sample as a list, as prior_distribution_list returns a list
+
+generate_abc_sample(given_data1, given_data2, avg_frob_distance,
+                        prior_distribution_list, simulate_household_data, epsilon = 20)
+```
+
+The code below produces 100 parameter samples that are accepted by the algorithm with $\epsilon = 15$. This is a computationally expensive process and took about 2 hours to run on RStudio (local machine).
 
 ```{r, include=FALSE, echo = FALSE, results='hide'}
 # DO NOT RUN THE CELL BELOW THIS ONE!
-# It will take forever. Have already run it and saved the output as RDS to access it again.
+# It will take hours. Have already run it and saved the output as RDS to access it again.
 # Otherwise it creates problems in knitting and tries to draw samples again.  
 ```
 
 ```{r long-computation, eval=FALSE}
 # Generating 100 posterior samples
-posterior_samples <- replicate(n = 100,
-    generate_abc_sample(given_data1, given_data2, distance,
+posterior_samples_Table2 <- replicate(n = 100,
+    generate_abc_sample(given_data1, given_data2, avg_frob_distance,
                         prior_distribution, simulate_household_data, epsilon = 15))
 ```
 
 
 ```{r, include=FALSE, echo = FALSE, results='hide'}
 # Save posterior_samples_Table2.rds on your local machine before running this
-# saveRDS(posterior_samples, "posterior_samples_Table2.rds")
-posterior_samples <- readRDS("posterior_samples_Table2.rds")
+# saveRDS(posterior_samples_Table2, "posterior_samples_Table2.rds")
+posterior_samples_Table2 <- readRDS("posterior_samples_Table2.rds")
 ```
 
 Here are a few posterior samples from the 100 generated above.
 
 ```{r}
-posterior_samples[, 95:100]
+posterior_samples_Table2[, 95:100]
 ```
 
-We now extract individual parameters $q_{c1}$, $q_{h1}$, $q_{c2}$ and $q_{h2}$ from the samples. 
+We now extract individual parameters $q_{c1}$, $q_{h1}$, $q_{c2}$ and $q_{h2}$ from the samples. Note that since `prior_distribution` returned a named list of parameters, `posterior_samples_Table2` is a matrix with row names ("q_c1", "q_h1", "q_c2", "q_h2"). 
+
+```{r}
+is.matrix(posterior_samples_Table2)
+rownames(posterior_samples_Table2)
+```
+
+However, each row of the matrix `posterior_samples_Table2` is a list.
+
+```{r}
+typeof(posterior_samples_Table2["q_c1", ])
+```
+
+Therefore, we use the function `unlist` to store individual posterior parameter values as vectors in order to plot them.
 
 ```{r}
 # Extracting samples of parameters q_c1, q_h1, q_c2, q_h2 from the posterior samples
-q_c1 <- posterior_samples[1, ]  # First row for q_c1
-q_h1 <- posterior_samples[2, ]  # Second row for q_h1
-q_c2 <- posterior_samples[3, ]  # Third row for q_c2
-q_h2 <- posterior_samples[4, ]  # Fourth row for q_h2
+q_c1 <- unlist(posterior_samples_Table2["q_c1", ])
+q_h1 <- unlist(posterior_samples_Table2["q_h1", ])
+q_c2 <- unlist(posterior_samples_Table2["q_c2", ])
+q_h2 <- unlist(posterior_samples_Table2["q_h2", ])
 ```
 
 Finally, we plot the simulated parameters $q_h$ vs $q_c$ for the two outbreaks. This recreates Figure 3(a) from [Toni and Stumpf (2010)](https://watermark.silverchair.com/bioinformatics_26_1_104.pdf?token=AQECAHi208BE49Ooan9kkhW_Ercy7Dm3ZL_9Cf3qfKAc485ysgAAA3swggN3BgkqhkiG9w0BBwagggNoMIIDZAIBADCCA10GCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMjV15kHzFknWstbVZAgEQgIIDLvGZcFAgMxJ2FtxTGrsPvkAoO-imsFvwyY2RJRbPWpz_WYOR3ZYIIXnJpmCp_pOOlhB9fGwvPCCBNkFN7jjQvo-jtSs3vYGT9U9ABO1ngcGxGq0M_-xfz5QDNcfLJpdHphXjvXPmNQKw-FbmW7Z-lM4VADhWgRMXeAa69IcQWbf3O3M4YVlAfOhNibTRLt8QLpayutZlbZAwX6aC2a13wmjnKF6Vx3WJWazbewssqJov9CmNXprFKUqnhcq1QLZ4oaGSKYaxVFpmwB2ZylzUBbliQ3fYN6VRAfleLXrmyvOymid2GtXNnhrslyx6SN2OSgbXU0YIgfSgCk5OaCETsFY7VMGzLCuUTB776n6hDJKcZ-Hb7RelIJxLeOZteaxRVOiu-a9pG5NbQQuueQtS0C-kqHlVksEwUAucqzS9UXX3ucvmsIgYK-jQQ8jmtqPTjVkdFGhR1J3LzOw7VJCJQy4b_a_WZLDNS7bskxvvZgU7DOZAVHxYu1aPUHh3UaeJ-5oMwJ-sqFWg_6ZruUPk4L9f1KB1siRgSmxw-Eo4JHKXjSEsIXAylD3m_trgxEIxkeqgXFJ867U-qJxeG39ToS9BptAG_IGK-HfMD0ovPK9mKHXvrp32fRO5S0oiqaCMa8kV4DGwbZjaMArJDV9Ps3WNw_EE2E8m7J4UjiqLNQkihUtUM6d4xmJ-S4zo-qPJkr0ajWkDhQwkeJ1wsaYGXItivcoAB4lzyQmG3Zs5kQQIIa2m4hveEf2mDlglHMoPHTAN5hGG-9_LegexhFcKAZTguF4nNpozqAVsIQaj8DeAaHWY8AvjP5HjDTgYHs4ni3w7EjULGDSroFhBndTpCAMNjtY9yIqoh248Bf7ayWtBCXUx1yJyIamAPGeHej3nPnf80TACr2Of6fJicQ-hFcdVGzQj8qiq8b9GuOFFJ43SnZudftdAwwlA0mQb30ZhvgJvsYngGY752-NegVEd2F_r6N2Jkw-G-fzEnoObf6OXzGaYlNSq4_s4vGnQ38HGe_HPk7fdDIESUA35j1SbK5K83274IWvReND0Byubb2MmgZ4fJ90sCCKnjLeu9ho) using the Supplementary data in Table 2. As in the original paper, we use \textcolor{red}{red} for the 1977 outbreak ($q_{h1}, q_{c1}$) and \textcolor{blue}{blue} for the 1980 outbreak ($q_{h2}, q_{c2}$).
@@ -331,7 +391,7 @@ Finally, we plot the simulated parameters $q_h$ vs $q_c$ for the two outbreaks. 
 # Recreate Figure 3(a) with n = 100 posterior samples and epsilon = 15
 
 par(pty = "s")      
-
+# Add first set of data (q_h1, q_c1) in red
 plot(q_h1, q_c1, 
      main = "q_h vs q_c (n = 100, epsilon = 15)", 
      xlab = "q_h", ylab = "q_c", 
@@ -349,7 +409,22 @@ legend("bottomleft",
        pch = 16, bty = "n")
 ```
 
-### Observed Data (Table 3)
+Mean values of posterior samples are given below.
+
+```{r}
+mean_q_c1 <- mean(q_c1)
+mean_q_h1 <- mean(q_h1)
+mean_q_c2 <- mean(q_c2)
+mean_q_h2 <- mean(q_h2)
+
+cat("Mean of q_c1:", mean_q_c1, "\n")
+cat("Mean of q_h1:", mean_q_h1, "\n")
+cat("Mean of q_c2:", mean_q_c2, "\n")
+cat("Mean of q_h2:", mean_q_h2, "\n")
+```
+
+
+### Influenza A and B outbreaks in Seattle, Washington
 
 The following code stores the observed data from Table 3 of the Supplementary Material. 
 
@@ -371,18 +446,17 @@ given_data4 <- matrix(c(15, 12, 4,
 
 ```
 
-### Applying ABC to get posterior samples from Observed Data from Table 3
 
-As with data from Table 2, we now apply our sample generating function to get posterior samples for $(q_{c3}, q_{h3}, q_{c4}, q_{h4})$. Since the given data in Table 3 is smaller than the one in Table 2, we are able to choose a smaller $\epsilon$ and still be within computational limits. We use $\epsilon = 7$ as a reasonable tolerance level.
+As with data from Table 2, we now apply our sample generating function to get posterior samples for $(q_{c3}, q_{h3}, q_{c4}, q_{h4})$. Since the given data in Table 3 is smaller than the one in Table 2, we are able to choose a smaller $\epsilon$ and still be within computational limits. We use $\epsilon = 8$ as a reasonable tolerance level. This value also falls in the tolerance schedule used by Toni and Stumpf.
 
 ```{r}
 # Generating one posterior sample 
 
-generate_abc_sample(given_data3, given_data4, distance, 
-                    prior_distribution, simulate_household_data, epsilon = 7)
+generate_abc_sample(given_data3, given_data4, avg_frob_distance, 
+                    prior_distribution, simulate_household_data, epsilon = 8)
 ```
 
-The code below produces 200 parameter samples that are accepted by the algorithm with $\epsilon = 7$.
+The code below produces 200 parameter samples that are accepted by the algorithm with $\epsilon = 8$.
 
 ```{r, include=FALSE, echo = FALSE, results='hide'}
 # DO NOT RUN THE CELL BELOW THIS ONE!
@@ -392,51 +466,51 @@ The code below produces 200 parameter samples that are accepted by the algorithm
 
 ```{r long-computation-2, eval=FALSE}
 # Generating 200 posterior samples
-posterior_samples2 <- replicate(n = 200,
-    generate_abc_sample(given_data3, given_data4, distance, 
-                        prior_distribution, simulate_household_data, epsilon = 7))
+posterior_samples_Table3 <- replicate(n = 200,
+    generate_abc_sample(given_data3, given_data4, avg_frob_distance, 
+                        prior_distribution, simulate_household_data, epsilon = 8))
 ```
 
 
 ```{r, include=FALSE, echo = FALSE, results='hide'}
-# Save posterior_samples_Table3.rds on your local machine (from Drive) before running this
-# saveRDS(posterior_samples2, "posterior_samples_Table3.rds")
-posterior_samples2 <- readRDS("posterior_samples_Table3.rds")
+# Save posterior_samples_Table3.rds on your local machine before running this
+# saveRDS(posterior_samples_Table3, "posterior_samples_Table3.rds")
+posterior_samples_Table3 <- readRDS("posterior_samples_Table3.rds")
 ```
 
 Here are a few posterior samples from the 200 generated above.
 
 ```{r}
-posterior_samples2[, 95:100]
+posterior_samples_Table3[, 195:200]
 ```
 
-We now extract individual parameters $q_{c3}$, $q_{h3}$, $q_{c4}$ and $q_{h4}$ from the samples. 
+We now extract individual parameters $q_{c1}$, $q_{h1}$, $q_{c2}$ and $q_{h2}$ from the samples. 
 
 ```{r}
-# Extracting samples of parameters q_c3, q_h3, q_c4, q_h4 from the posterior samples
-q_c3 <- posterior_samples2[1, ]  # First row for q_c3
-q_h3 <- posterior_samples2[2, ]  # Second row for q_h3
-q_c4 <- posterior_samples2[3, ]  # Third row for q_c4
-q_h4 <- posterior_samples2[4, ]  # Fourth row for q_h4
+# Extracting samples of parameters q_c1, q_h1, q_c2, q_h2 from the posterior samples
+q_c1 <- unlist(posterior_samples_Table3["q_c1", ])
+q_h1 <- unlist(posterior_samples_Table3["q_h1", ])
+q_c2 <- unlist(posterior_samples_Table3["q_c2", ])
+q_h2 <- unlist(posterior_samples_Table3["q_h2", ])
 ```
 
 Finally, we plot the simulated parameters $q_h$ vs $q_c$ for the two outbreaks. This recreates Figure 3(b) from [Toni and Stumpf (2010)](https://watermark.silverchair.com/bioinformatics_26_1_104.pdf?token=AQECAHi208BE49Ooan9kkhW_Ercy7Dm3ZL_9Cf3qfKAc485ysgAAA3swggN3BgkqhkiG9w0BBwagggNoMIIDZAIBADCCA10GCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMjV15kHzFknWstbVZAgEQgIIDLvGZcFAgMxJ2FtxTGrsPvkAoO-imsFvwyY2RJRbPWpz_WYOR3ZYIIXnJpmCp_pOOlhB9fGwvPCCBNkFN7jjQvo-jtSs3vYGT9U9ABO1ngcGxGq0M_-xfz5QDNcfLJpdHphXjvXPmNQKw-FbmW7Z-lM4VADhWgRMXeAa69IcQWbf3O3M4YVlAfOhNibTRLt8QLpayutZlbZAwX6aC2a13wmjnKF6Vx3WJWazbewssqJov9CmNXprFKUqnhcq1QLZ4oaGSKYaxVFpmwB2ZylzUBbliQ3fYN6VRAfleLXrmyvOymid2GtXNnhrslyx6SN2OSgbXU0YIgfSgCk5OaCETsFY7VMGzLCuUTB776n6hDJKcZ-Hb7RelIJxLeOZteaxRVOiu-a9pG5NbQQuueQtS0C-kqHlVksEwUAucqzS9UXX3ucvmsIgYK-jQQ8jmtqPTjVkdFGhR1J3LzOw7VJCJQy4b_a_WZLDNS7bskxvvZgU7DOZAVHxYu1aPUHh3UaeJ-5oMwJ-sqFWg_6ZruUPk4L9f1KB1siRgSmxw-Eo4JHKXjSEsIXAylD3m_trgxEIxkeqgXFJ867U-qJxeG39ToS9BptAG_IGK-HfMD0ovPK9mKHXvrp32fRO5S0oiqaCMa8kV4DGwbZjaMArJDV9Ps3WNw_EE2E8m7J4UjiqLNQkihUtUM6d4xmJ-S4zo-qPJkr0ajWkDhQwkeJ1wsaYGXItivcoAB4lzyQmG3Zs5kQQIIa2m4hveEf2mDlglHMoPHTAN5hGG-9_LegexhFcKAZTguF4nNpozqAVsIQaj8DeAaHWY8AvjP5HjDTgYHs4ni3w7EjULGDSroFhBndTpCAMNjtY9yIqoh248Bf7ayWtBCXUx1yJyIamAPGeHej3nPnf80TACr2Of6fJicQ-hFcdVGzQj8qiq8b9GuOFFJ43SnZudftdAwwlA0mQb30ZhvgJvsYngGY752-NegVEd2F_r6N2Jkw-G-fzEnoObf6OXzGaYlNSq4_s4vGnQ38HGe_HPk7fdDIESUA35j1SbK5K83274IWvReND0Byubb2MmgZ4fJ90sCCKnjLeu9ho) using the Supplementary data in Table 3. As in the original paper, we use \textcolor{red}{red} for the 1975 outbreak ($q_{h3}, q_{c3}$) and \textcolor{blue}{blue} for the 1978 outbreak ($q_{h4}, q_{c4}$).
 
 
 ```{r}
-# Recreate Figure 3(b) with n = 200 posterior samples and epsilon = 7
+# Recreate Figure 3(b) with n = 200 posterior samples and epsilon = 8
 
 par(pty = "s")      
-
-plot(q_h3, q_c3, 
-     main = "q_h vs q_c (n = 200, epsilon = 7)", 
+# Add first set of data (q_h1, q_c1) in red
+plot(q_h1, q_c1, 
+     main = "q_h vs q_c (n = 200, epsilon = 8)", 
      xlab = "q_h", ylab = "q_c", 
      xlim = c(0, 1), ylim = c(0, 1), 
      pch = 16, col = "red", 
      cex = 1.5)  
 
-# Add second set of data (q_h4, q_c4) in blue
-points(q_h4, q_c4, pch = 16, col = "blue", cex = 1.2)
+# Add second set of data (q_h2, q_c2) in blue
+points(q_h2, q_c2, pch = 16, col = "blue", cex = 1.2)
 
 # Add a legend
 legend("bottomleft", 
@@ -445,34 +519,47 @@ legend("bottomleft",
        pch = 16, bty = "n")
 ```
 
+Mean values of posterior samples are given below.
+
+```{r}
+mean_q_c1 <- mean(q_c1)
+mean_q_h1 <- mean(q_h1)
+mean_q_c2 <- mean(q_c2)
+mean_q_h2 <- mean(q_h2)
+
+cat("Mean of q_c1:", mean_q_c1, "\n")
+cat("Mean of q_h1:", mean_q_h1, "\n")
+cat("Mean of q_c2:", mean_q_c2, "\n")
+cat("Mean of q_h2:", mean_q_h2, "\n")
+```
 
 ## The 2-parameter model
 
-The plot comparing models of outbreaks of the same strain of the virus suggests that different outbreaks of the same strain of a virus can be modeled using the same parameters. To this end, in this section we write functions for the two parameter model described by Toni and Stumpf and use this model to find parameters for the model of influenza A. This process follows the process for the four parameter model closely. We can reuse the functions `W_js_matrix` and `simulate_household_data` without any changes. Below we rework the functions `prior_distribution`, `distance`, and `generate_abc_samples` to work with the two parameter model.
+The plot comparing models of outbreaks of the same strain of the virus suggests that different outbreaks of the same strain of a virus can be modeled using the same parameters. To this end, in this section we write functions for the two parameter model described by Toni and Stumpf and use this model to find parameters for the model of influenza A. This process follows the process for the four parameter model closely. We can again reuse the functions `W_js_matrix` and `simulate_household_data` without any changes. Below we rework the functions `prior_distribution`, and `generate_abc_samples` to work with the 2-parameter model.
 
 ```{r}
 # Returns 2 random values from the uniform prior distribution on [0,1]
-prior_distribution_2 <- function() runif(n = 2, min = 0, max = 1)  
-
-```
-
-```{r}
-# Uses the Frobenius norm to return the distance between "given_data" and "simulated_data"
-
-distance_2 <- function(given_data, simulated_data){
-  # Throw error if given_data and simulated_data aren't the same size
-  if(ncol(given_data)!=ncol(simulated_data) || nrow(given_data) != nrow(simulated_data)){
-    stop("Invalid inputs: given_data and simulated_data have different dimensions")
-  }
-
-  total_distance = frobenius_norm(given_data-simulated_data)
-  return(total_distance)
+prior_distribution_2 <- function() {
+  parameters <- runif(n = 2, min = 0, max = 1)
+  names(parameters) <- c("q_c", "q_h")
+  as.list(parameters)
 }
 ```
 
+To generate posterior samples, we use two approaches:
+
+- Generating two datasets using the same parameters $q_c, q_h$ and computing their average Frobenius distance with the given datasets
+
+- Combining the given data into a single dataset, generating one dataset using $q_c,q_h$ and computing their Frobenius distance.
+
+We believe that the authors employed the former approach.
+
+### 2-parameter model with separate datasets for influenza A outbreaks
+
+The following function generates posteriors for the 2 parameter model using two separate datasets for each outbreak of the virus.
+
 ```{r}
-# This function generates posteriors for the 2 parameter model
-generate_abc_sample_2 <- function(given_data,
+generate_abc_sample_2 <- function(given_data1, given_data2,
                                 distance,
                                 prior_distribution,
                                 data_simulating_function,
@@ -487,34 +574,193 @@ generate_abc_sample_2 <- function(given_data,
         q <- prior_distribution()
         
         # Throw error if prior_distribution is not of the right shape
-        if(as.double(length(q))!=2){
-          stop("Prior_distribution must have exactly 2 entries")
+        if(length(q)!=2){
+          stop("Prior_distribution must return either a list or a vector of length 2")
         }
       
-        q_c <- q[1]
-        q_h <- q[2]
+        # Handle both list and vector formats for q
+        if (is.list(q)) {
+            # Check that list elements are named correctly
+            required_names <- c("q_c", "q_h")
+            if (!setequal(required_names, names(q))) {
+                stop("Prior_distribution list must have names: q_c, q_h")
+            }
+            # Access elements by name
+            q_c <- q$q_c
+            q_h <- q$q_h
+            
+        } else if (is.vector(q)) {
+            # Access elements by index
+            # Default ordering if given a vector (q_c, q_h)
+            q_c <- q[1]
+            q_h <- q[2]
+            
+        } else {
+            stop("Prior_distribution must return either a list or a vector")
+        }
         
-        household_size <- ncol(given_data)
-        n_households <- colSums(given_data)
+        household_size1 <- ncol(given_data1)
+        n_households1 <- colSums(given_data1)
         
-        simulated_data <- data_simulating_function(q_c, q_h, household_size, n_households)
+        simulated_data1 <- data_simulating_function(q_c, q_h, household_size1, n_households1)
         
-        if(distance_2(given_data, simulated_data) < epsilon) {
+        household_size2 <- ncol(given_data2)
+        n_households2 <- colSums(given_data2)
+        
+        simulated_data2 <- data_simulating_function(q_c, q_h, household_size2, n_households2)
+        
+        if(distance(given_data1, given_data2, simulated_data1, simulated_data2) < epsilon) {
             return(q)
         }
     }
 }
 ```
 
-### 2 Parameter Model for Influenza A Outbreaks
+Now with these modified functions we are able to build a 2 parameter model for influenza A infection in Tecumseh, Michigan [3]. We use the same data again as given in Table 2.
 
-Now with these modified functions we are able to build a 2 parameter model for influenza A. To do this we will first combine the data given for the 1977-78 and 1980-81 outbreaks of influenza A into one matrix by adding the matrices for the separate outbreaks. Another approach could be to still use the average Frobenius distance between the separate datasets and two simulated ones, which perhap the authors do.
+We generate 100 posterior samples using $\epsilon = 20$. 
+
+```{r, include=FALSE, echo = FALSE, results='hide'}
+# DO NOT RUN THE CELL BELOW THIS ONE!
+# It will take forever. Have already run it and saved the output as RDS to access it again.
+# Otherwise it creates problems in knitting and tries to draw samples again.  
+```
+
+```{r long-computation-4, eval=FALSE}
+# Generating 100 posterior samples
+influenzaA_posterior_samples <- replicate(n = 100,
+    generate_abc_sample_2(given_data1, given_data2, avg_frob_distance, 
+                        prior_distribution_2, simulate_household_data, epsilon = 20))
+```
+
+
+```{r, include=FALSE, echo = FALSE, results='hide'}
+# Save influenzaA_posterior_samples.rds on your local machine before running this
+# saveRDS(influenzaA_posterior_samples, "influenzaA_posterior_samples.rds")
+influenzaA_posterior_samples <- readRDS("influenzaA_posterior_samples.rds")
+```
+
+Here are a few posterior samples from the 100 generated above.
+
+```{r}
+influenzaA_posterior_samples[, 95:100]
+```
+
+We now extract individual parameters $q_{c}$ and $q_{h}$ from the samples. 
+
+```{r}
+# Extracting samples of parameters q_c, q_h from the posterior samples
+q_c <- unlist(influenzaA_posterior_samples["q_c", ])
+q_h <- unlist(influenzaA_posterior_samples["q_h", ])
+```
+
+We can approximate the distribution of $q_c$ and $q_h$ using by plotting these samples.
+
+```{r}
+par(pty = "s")      
+
+plot(q_h, q_c, 
+     main = "q_h vs q_c (n = 100, epsilon = 20)", 
+     xlab = "q_h", ylab = "q_c", 
+     xlim = c(0, 1), ylim = c(0, 1), 
+     pch = 16, col = "magenta", 
+     cex = 1.5)  
+
+mtext("Using two separate datasets and average Frobenius distance", side = 1, line = 5, cex = 1.2)
+```
+
+Mean values of posterior samples are given below.
+
+```{r}
+mean_q_c <- mean(q_c)
+mean_q_h <- mean(q_h)
+
+cat("Mean of q_c:", mean_q_c, "\n")
+cat("Mean of q_h:", mean_q_h, "\n")
+```
+
+### 2-parameter model with combined dataset for influenza A outbreaks
+
+In order to use the outbreak datasets as a single combined data, we first need to define the Frobenius distance function, as opposed to the average Frobenius distance function we have been using. 
+
+```{r}
+# Uses the Frobenius norm to return the distance between "given_data" and "simulated_data"
+frob_distance <- function(given_data, simulated_data){
+  # Throw error if given_data and simulated_data aren't the same size
+  if(ncol(given_data)!=ncol(simulated_data) || nrow(given_data) != nrow(simulated_data)){
+    stop("Invalid inputs: given_data and simulated_data have different dimensions")
+  }
+
+  total_distance = frobenius_norm(given_data-simulated_data)
+  return(total_distance)
+}
+```
+
+The following function generates posteriors for the 2 parameter model using a single combined dataset for the two influenza A outbreaks.
+
+```{r}
+# This function generates posteriors for the 2 parameter model using one combined dataset
+generate_abc_sample_combined <- function(given_data,
+                                distance,
+                                prior_distribution,
+                                data_simulating_function,
+                                epsilon) {
+    
+    #Throw error if tolerance level is not positive
+    if(epsilon <= 0){
+      stop("Epsilon must be positive")
+    }
+        
+  
+    while(TRUE) {
+      
+        q <- prior_distribution()
+        
+        # Throw error if prior_distribution is not of the right shape
+        if(length(q)!=2){
+          stop("Prior_distribution must return either a list or a vector of length 2")
+        }
+      
+        # Handle both list and vector formats for q
+        if (is.list(q)) {
+            # Check that list elements are named correctly
+            required_names <- c("q_c", "q_h")
+            if (!setequal(required_names, names(q))) {
+                stop("Prior_distribution list must have names: q_c, q_h")
+            }
+            # Access elements by name
+            q_c <- q$q_c
+            q_h <- q$q_h
+            
+        } else if (is.vector(q)) {
+            # Access elements by index
+            # Default ordering if given a vector (q_c, q_h)
+            q_c <- q[1]
+            q_h <- q[2]
+            
+        } else {
+            stop("Prior_distribution must return either a list or a vector")
+        }
+        
+        household_size <- ncol(given_data)
+        n_households <- colSums(given_data)
+        
+        simulated_data <- data_simulating_function(q_c, q_h, household_size, n_households)
+        
+        if(distance(given_data, simulated_data) < epsilon) {
+            return(q)
+        }
+    }
+}
+```
+
+Now with these modified functions we are able to build another 2-parameter model for influenza A. To do this we will first combine the data given for the 1977-78 and 1980-81 outbreaks of influenza A into one matrix by adding the matrices for the separate outbreaks. 
 
 ```{r}
 combined_influenza_data <- given_data1 + given_data2
 ```
 
-Using this data set, we can use the 2 parameter functions from above to generate many posterior samples. Here we use the same value for $\epsilon$ as in the 4 parameter model.
+Using this data set, we again generate 100 posterior samples using $\epsilon = 20$. 
 
 ```{r, include=FALSE, echo = FALSE, results='hide'}
 # DO NOT RUN THE CELL BELOW THIS ONE!
@@ -523,8 +769,8 @@ Using this data set, we can use the 2 parameter functions from above to generate
 ```
 
 ```{r long-computation-3, eval=FALSE}
-combined_influenza_posterior_samples <- replicate(n = 100, generate_abc_sample_2(combined_influenza_data, distance_2,
-                      prior_distribution_2, simulate_household_data, epsilon = 15))
+combined_influenza_posterior_samples <- replicate(n = 100, generate_abc_sample_combined(combined_influenza_data, frob_distance,
+                      prior_distribution_2, simulate_household_data, epsilon = 20))
 ```
 
 
@@ -540,47 +786,58 @@ Here are a few posterior samples from the 100 generated above.
 combined_influenza_posterior_samples[, 95:100]
 ```
 
-We can represent all of this data in a scatterplot similar to the ones above.
+We now extract individual parameters $q_{c}$ and $q_{h}$ from the samples. 
+
+```{r}
+# Extracting samples of parameters q_c, q_h from the posterior samples
+q_c <- unlist(combined_influenza_posterior_samples["q_c", ])
+q_h <- unlist(combined_influenza_posterior_samples["q_h", ])
+```
+
+We can approximate the distribution of $q_c$ and $q_h$ using by plotting these samples.
 
 ```{r}
 par(pty = "s")      
 
-plot(combined_influenza_posterior_samples[2,], combined_influenza_posterior_samples[1,], 
-     main = "q_h vs q_c (n = 100, epsilon = 15)", 
+plot(q_h, q_c, 
+     main = "q_h vs q_c (n = 100, epsilon = 20)", 
      xlab = "q_h", ylab = "q_c", 
      xlim = c(0, 1), ylim = c(0, 1), 
-     pch = 16, col = "blue", 
-     cex = 1.5)
+     pch = 16, col = "orange", 
+     cex = 1.5)  
 
+mtext("Using one combined dataset and Frobenius distance", side = 1, line = 5, cex = 1.2)
 ```
 
-
-One way to choose parameters to model the spread of influenza A would be to take $q_c$ and $q_h$ to be the average of the parameters stored in generated by this 2 parameter ABC approach.
+Mean values of posterior samples are given below.
 
 ```{r}
-influenza_a_q_c <- mean(combined_influenza_posterior_samples[1,])
+mean_q_c <- mean(q_c)
+mean_q_h <- mean(q_h)
 
-influenza_a_q_h <- mean(combined_influenza_posterior_samples[2,])
-
-print(paste("Mean q_c is", round(influenza_a_q_c,4) , "and mean q_h is" , round(influenza_a_q_h,4)))
-  
+cat("Mean of q_c:", mean_q_c, "\n")
+cat("Mean of q_h:", mean_q_h, "\n")
 ```
 
 
 ## The 3-Parameter model
 
-The plot comparing models of the outbreaks of different strains of the virus suggests that outbreaks of different strains have the same $q_h$ but different $q_c$. This can be modeled using a 3-parameter model same parameters $(q_{c1},q_{c2},q_h)$. We can again reuse the functions `W_js_matrix`, `simulate_household_data` and `distance` without any changes. Below we rework the functions `prior_distribution`, and `generate_abc_samples` to work with the three parameter model.
+The plot comparing models of the outbreaks of different strains of the virus suggests that outbreaks of different strains have the same $q_h$ but different $q_c$. This can be modeled using a 3-parameter model same parameters $(q_{c1},q_{c2},q_h)$. We can again reuse the functions `W_js_matrix`, `simulate_household_data` and `av_frob_distance` without any changes. Below we rework the functions `prior_distribution`, and `generate_abc_samples` to work with the three parameter model.
 
 
 ```{r}
 # Returns 3 random values from the uniform prior distribution on [0,1]
-prior_distribution_3 <- function() runif(n = 3, min = 0, max = 1)  
+prior_distribution_3 <- function() {
+  parameters <- runif(n = 3, min = 0, max = 1)
+  names(parameters) <- c("q_c1", "q_c2", "q_h")
+  as.list(parameters)
+}
 ```
 
 
 ```{r}
 # This function generates posteriors for the 3 parameter model
-generate_abc_sample3 <- function(given_data1, given_data2,
+generate_abc_sample_3 <- function(given_data1, given_data2,
                                 distance,
                                 prior_distribution,
                                 data_simulating_function,
@@ -595,13 +852,31 @@ generate_abc_sample3 <- function(given_data1, given_data2,
         q <- prior_distribution()
         
         # Throw error if prior_distribution is not of the right shape
-        if(as.double(length(q))!=3){
-          stop("Prior_distribution must have exactly 3 entries")
+        if(length(q)!=3){
+          stop("Prior_distribution must return either a list or a vector of length 3")
         }
       
-        q_c1 <- q[1]
-        q_c2 <- q[2]
-        q_h <- q[3]
+        # Handle both list and vector formats for q
+        if (is.list(q)) {
+            # Check that list elements are named correctly
+            required_names <- c("q_c1", "q_c2", "q_h")
+            if (!setequal(required_names, names(q))) {
+                stop("Prior_distribution list must have names: q_c1, q_c2, q_h")
+            }
+            # Access elements by name
+            q_c1 <- q$q_c1
+            q_c2 <- q$q_c2
+            q_h <- q$q_h
+        } else if (is.vector(q)) {
+            # Access elements by index
+            # Default ordering if given a vector (q_c1, q_c2, q_h)
+            q_c1 <- q[1]
+            q_c2 <- q[2]
+            q_h <- q[3]
+        } else {
+            stop("Prior_distribution must return either a list or a vector")
+        }
+        
         
         household_size1 <- ncol(given_data1)
         n_households1 <- colSums(given_data1)
@@ -613,7 +888,7 @@ generate_abc_sample3 <- function(given_data1, given_data2,
         
         simulated_data2 <- data_simulating_function(q_c2, q_h, household_size2, n_households2)
         
-        if(distance(given_data3, given_data4, simulated_data1, simulated_data2) < epsilon) {
+        if(distance(given_data1, given_data2, simulated_data1, simulated_data2) < epsilon) {
             return(q)
         }
     }
@@ -624,22 +899,7 @@ generate_abc_sample3 <- function(given_data1, given_data2,
 
 Now with these modified functions we are able to build a 3 parameter model for influenza A and influenza B. We use the same data again as given in Table 3.
 
-```{r}
-given_data3 <- matrix(c(9, 12, 18, 9, 4,
-                        1, 6, 6, 4, 3,
-                        0, 2, 3, 4, 0,
-                        0, 0, 1, 3, 2,
-                        0, 0, 0, 0, 0, 
-                        0, 0, 0, 0, 0), byrow = TRUE, ncol=5)
-
-given_data4 <- matrix(c(15, 12, 4,
-                        11, 17, 4,
-                        0, 21, 4,
-                        0, 0, 5 ), byrow = TRUE, ncol=3)
-
-```
-
-Using this data set, we can use the 3 parameter functions from above to generate many posterior samples. Here we again use $\epsilon = 7$ for this smaller dataset and generate 200 samples.
+Here we again use $\epsilon = 8$ for this smaller dataset and generate 200 samples.
 
 ```{r, include=FALSE, echo = FALSE, results='hide'}
 # DO NOT RUN THE CELL BELOW THIS ONE!
@@ -647,33 +907,33 @@ Using this data set, we can use the 3 parameter functions from above to generate
 # Otherwise it creates problems in knitting and tries to draw samples again.  
 ```
 
-```{r long-computation-4, eval=FALSE}
+```{r long-computation-5, eval=FALSE}
 # Generating 200 posterior samples
-influenzaAB_samples <- replicate(n = 200,
-    generate_abc_sample3(given_data3, given_data4, distance, 
-                        prior_distribution_3, simulate_household_data, epsilon = 7))
+influenzaAB_posterior_samples <- replicate(n = 200,
+    generate_abc_sample_3(given_data3, given_data4, avg_frob_distance, 
+                        prior_distribution_3, simulate_household_data, epsilon = 8))
 ```
 
 
 ```{r, include=FALSE, echo = FALSE, results='hide'}
-# Save influenzaAB_samples.rds on your local machine before running this
-# saveRDS(influenzaAB_samples, "influenzaAB_samples.rds")
-influenzaAB_samples <- readRDS("influenzaAB_samples.rds")
+# Save influenzaAB_posterior_samples on your local machine before running this
+# saveRDS(influenzaAB_posterior_samples, "influenzaAB_posterior_samples.rds")
+influenzaAB_posterior_samples <- readRDS("influenzaAB_posterior_samples.rds")
 ```
 
 Here are a few posterior samples from the 200 generated above.
 
 ```{r}
-influenzaAB_samples[, 195:200]
+influenzaAB_posterior_samples[, 195:200]
 ```
 
 We now extract individual parameters $q_{c1}$, $q_{c2}$ and $q_{h}$ from the samples. 
 
 ```{r}
-# Extracting samples of parameters q_c3, q_h3, q_c4, q_h4 from the posterior samples
-q_c_1 <- influenzaAB_samples[1, ]  # First row for q_c_1
-q_c_2 <- influenzaAB_samples[2, ]  # Second row for q_c_2
-q_h <- influenzaAB_samples[3, ]  # Third row for q_h
+# Extracting samples of parameters q_c1, q_c2, q_h from the posterior samples
+q_c1 <- unlist(influenzaAB_posterior_samples["q_c1", ])
+q_c2 <- unlist(influenzaAB_posterior_samples["q_c2", ])
+q_h <- unlist(influenzaAB_posterior_samples["q_h", ])
 ```
 
 We can represent all of this data in a scatterplot similar to the ones above.
@@ -681,22 +941,34 @@ We can represent all of this data in a scatterplot similar to the ones above.
 ```{r}
 par(pty = "s")      
 
-# Add first set of data (q_h, q_c_1) in red
-plot(q_h, q_c_1, 
-     main = "q_h vs q_c (n = 200, epsilon = 7)", 
+# Add first set of data (q_h, q_c1) in red
+plot(q_h, q_c1, 
+     main = "q_h vs q_c (n = 200, epsilon = 8)", 
      xlab = "q_h", ylab = "q_c", 
      xlim = c(0, 1), ylim = c(0, 1), 
      pch = 16, col = "red", 
      cex = 1.5)  
 
-# Add second set of data (q_h, q_c_2) in blue
-points(q_h, q_c_2, pch = 16, col = "blue", cex = 1.2)
+# Add second set of data (q_h, q_c2) in blue
+points(q_h, q_c2, pch = 16, col = "blue", cex = 1.2)
 
 # Add a legend
 legend("bottomleft", 
        legend = c("given_data3 from Table 3", "given_data4 from Table 3"), 
        col = c("red", "blue"), 
        pch = 16, bty = "n")
+```
+
+Mean values of posterior samples are given below.
+
+```{r}
+mean_q_c1 <- mean(q_c1)
+mean_q_c2 <- mean(q_c2)
+mean_q_h <- mean(q_h)
+
+cat("Mean of q_c1:", mean_q_c1, "\n")
+cat("Mean of q_c2:", mean_q_c2, "\n")
+cat("Mean of q_h:", mean_q_h, "\n")
 ```
 
 ## Model Comparison using ABC rejection sampler
@@ -737,14 +1009,14 @@ That is, the more often a sample belonging to a model $m^{(i)}$ is accepted, the
 
 ### 2-Parameter Model vs 4-Parameter Model for different outbreaks of the same virus
 
-Below we write a function to compare the 2-parameter model (model 1) and the 4-parameter model (model 2) for the two outbreaks of influenza A strain. Prior over models is uniform over model 1 and model 2, prior for parameters is Uniform[0,1] for both models and data generating function is the same as before, i.e. `simulate_household_data`. Here we take the average Frobenius distance for the 2-parameter model to replicate the authors' results in Figure 1(a) of Supplementary data. 
+Below we write a function to compare the 2-parameter model (model 1) and the 4-parameter model (model 2) for the two outbreaks of influenza A strain. Prior over models is uniform over model 1 and model 2, prior for parameters is Uniform[0,1] for both models and data generating function is the same as before, i.e. `simulate_household_data`. For the 2-parameter model, we don't combine the datasets for the two outbreaks and take the average Frobenius distance to replicate the authors' results in Figure 1(a) of Supplementary data. 
 
 We use a subset of the tolerance schedule used by the authors, namely $\epsilon = \{100, 80, 50, 30, 20\}$.
 
 ```{r}
 # Function to calculate posterior model probabilities 
 # for model 1 (2-parameter) and model 2 (4-parameter) for Table 2
-calculate_model_postr <- function(given_data1, given_data2, epsilon, n_samples) {
+model_posterior_2vs4 <- function(given_data1, given_data2, epsilon, n_samples) {
   
   # Initialize counters for accepted samples
   accepted_samples_model_1 <- 0
@@ -757,9 +1029,10 @@ calculate_model_postr <- function(given_data1, given_data2, epsilon, n_samples) 
     
     q_model_1 <- prior_distribution_2()
     
-    q_c <- q_model_1[1]
-    q_h <- q_model_1[2]
-        
+    q_c <- q_model_1$q_c
+    q_h <- q_model_1$q_h
+     
+       
     household_size11 <- ncol(given_data1)
     n_households11 <- colSums(given_data1)
         
@@ -770,7 +1043,7 @@ calculate_model_postr <- function(given_data1, given_data2, epsilon, n_samples) 
         
     simulated_data12 <- simulate_household_data(q_c, q_h, household_size12, n_households12)
     
-    if (distance(given_data1, given_data2, simulated_data11, simulated_data12) < epsilon) {
+    if (avg_frob_distance(given_data1, given_data2, simulated_data11, simulated_data12) < epsilon) {
       accepted_samples_model_1 <- accepted_samples_model_1 + 1
     }
     
@@ -778,10 +1051,10 @@ calculate_model_postr <- function(given_data1, given_data2, epsilon, n_samples) 
     
     q_model_2 <- prior_distribution()
     
-    q_c1 <- q_model_2[1]
-    q_h1 <- q_model_2[2]
-    q_c2 <- q_model_2[3]
-    q_h2 <- q_model_2[4]
+    q_c1 <- q_model_2$q_c1
+    q_h1 <- q_model_2$q_h1
+    q_c2 <- q_model_2$q_c2
+    q_h2 <- q_model_2$q_h2
     
     
     household_size21 <- ncol(given_data1)
@@ -794,7 +1067,7 @@ calculate_model_postr <- function(given_data1, given_data2, epsilon, n_samples) 
         
     simulated_data22 <- simulate_household_data(q_c2, q_h2, household_size22, n_households22)
 
-    if (distance(given_data1, given_data2, simulated_data21, simulated_data22) < epsilon) {
+    if (avg_frob_distance(given_data1, given_data2, simulated_data21, simulated_data22) < epsilon) {
       accepted_samples_model_2 <- accepted_samples_model_2 + 1
     }
     
@@ -822,6 +1095,7 @@ calculate_model_postr <- function(given_data1, given_data2, epsilon, n_samples) 
 
 This function takes the datasets for the two outbreaks, a tolerance level and number of iterations to perform, and returns a list containing posterior probabilities for both models as well as the number of accepted samples for both models.
 
+
 ```{r, include=FALSE, echo = FALSE, results='hide'}
 # Save model_postr as rds on your local machine before running this
 # saveRDS(model_postr_100, "1model_postr_100.rds")
@@ -838,16 +1112,22 @@ model_postr_20 <- readRDS("1model_postr_20.rds")
 
 Here we approximate posterior probabilities for the models using 1000 iterations and tolerance levels from our tolerance schedule.
 
-```{r long-computation-5, eval=FALSE}
-model_postr_100 <- calculate_model_postr(given_data1, given_data2, epsilon = 100, n_samples = 1000)
+```{r, include=FALSE, echo = FALSE, results='hide'}
+# DO NOT RUN THE CELL BELOW THIS ONE!
+# It will take forever. Have already run it and saved the output as RDS to access it again.
+# Otherwise it creates problems in knitting and tries to draw samples again.  
+```
 
-model_postr_80 <- calculate_model_postr(given_data1, given_data2, epsilon = 80, n_samples = 1000)
+```{r long-computation-6, eval=FALSE}
+model_postr_100 <- model_posterior_2vs4(given_data1, given_data2, epsilon = 100, n_samples = 1000)
 
-model_postr_50 <- calculate_model_postr(given_data1, given_data2, epsilon = 50, n_samples = 1000)
+model_postr_80 <- model_posterior_2vs4(given_data1, given_data2, epsilon = 80, n_samples = 1000)
 
-model_postr_30 <- calculate_model_postr(given_data1, given_data2, epsilon = 30, n_samples = 1000)
+model_postr_50 <- model_posterior_2vs4(given_data1, given_data2, epsilon = 50, n_samples = 1000)
 
-model_postr_20 <- calculate_model_postr(given_data1, given_data2, epsilon = 20, n_samples = 1000)
+model_postr_30 <- model_posterior_2vs4(given_data1, given_data2, epsilon = 30, n_samples = 1000)
+
+model_postr_20 <- model_posterior_2vs4(given_data1, given_data2, epsilon = 20, n_samples = 1000)
 ```
 
 Here are the outputs from the above code in a dataframe form for easy readability. We don't display the code for it, but it can be found in our RMD file. 
@@ -951,7 +1231,7 @@ We again use a subset of the tolerance schedule used by the authors, namely $\ep
 ```{r}
 # Function to calculate posterior model probabilities 
 # for model 1 (3-parameter) and model 2 (4-parameter) for Table 3
-calculate_model_postr2 <- function(given_data1, given_data2, epsilon, n_samples) {
+model_posterior_3vs4 <- function(given_data1, given_data2, epsilon, n_samples) {
   
   # Initialize counters for accepted samples
   accepted_samples_model_1 <- 0
@@ -963,9 +1243,9 @@ calculate_model_postr2 <- function(given_data1, given_data2, epsilon, n_samples)
     
     q_model_1 <- prior_distribution_3()
     
-    q_c11 <- q_model_1[1]
-    q_c12 <- q_model_1[2]
-    q_h <- q_model_1[3]
+    q_c11 <- q_model_1$q_c1
+    q_c12 <- q_model_1$q_c2
+    q_h <- q_model_1$q_h
         
     household_size11 <- ncol(given_data1)
     n_households11 <- colSums(given_data1)
@@ -977,7 +1257,7 @@ calculate_model_postr2 <- function(given_data1, given_data2, epsilon, n_samples)
         
     simulated_data12 <- simulate_household_data(q_c12, q_h, household_size12, n_households12)
     
-    if (distance(given_data1, given_data2, simulated_data11, simulated_data12) < epsilon) {
+    if (avg_frob_distance(given_data1, given_data2, simulated_data11, simulated_data12) < epsilon) {
       accepted_samples_model_1 <- accepted_samples_model_1 + 1
     }
     
@@ -985,10 +1265,10 @@ calculate_model_postr2 <- function(given_data1, given_data2, epsilon, n_samples)
     
     q_model_2 <- prior_distribution()
     
-    q_c21 <- q_model_2[1]
-    q_h21 <- q_model_2[2]
-    q_c22 <- q_model_2[3]
-    q_h22 <- q_model_2[4]
+    q_c21 <- q_model_2$q_c1
+    q_h21 <- q_model_2$q_h1
+    q_c22 <- q_model_2$q_c2
+    q_h22 <- q_model_2$q_h2
     
     
     household_size21 <- ncol(given_data1)
@@ -1002,7 +1282,7 @@ calculate_model_postr2 <- function(given_data1, given_data2, epsilon, n_samples)
     simulated_data22 <- simulate_household_data(q_c22, q_h22, household_size22, n_households22)
 
     
-    if (distance(given_data1, given_data2, simulated_data21, simulated_data22) < epsilon) {
+    if (avg_frob_distance(given_data1, given_data2, simulated_data21, simulated_data22) < epsilon) {
       accepted_samples_model_2 <- accepted_samples_model_2 + 1
     }
     
@@ -1045,16 +1325,23 @@ Model_postr_8 <- readRDS("2Model_postr_8.rds")
 
 Here we approximate posterior probabilities for the models using 1000 iterations and tolerance levels from our tolerance schedule.
 
-```{r long-computation-6, eval=FALSE}
-Model_postr_40 <- calculate_model_postr2(given_data3, given_data4, epsilon = 40, n_samples = 1000)
 
-Model_postr_20 <- calculate_model_postr2(given_data3, given_data4, epsilon = 20, n_samples = 1000)
+```{r, include=FALSE, echo = FALSE, results='hide'}
+# DO NOT RUN THE CELL BELOW THIS ONE!
+# It will take forever. Have already run it and saved the output as RDS to access it again.
+# Otherwise it creates problems in knitting and tries to draw samples again.  
+```
 
-Model_postr_15 <- calculate_model_postr2(given_data3, given_data4, epsilon = 15, n_samples = 1000)
+```{r long-computation-7, eval=FALSE}
+Model_postr_40 <- model_posterior_3vs4(given_data3, given_data4, epsilon = 40, n_samples = 1000)
 
-Model_postr_10 <- calculate_model_postr2(given_data3, given_data4, epsilon = 10, n_samples = 1000)
+Model_postr_20 <- model_posterior_3vs4(given_data3, given_data4, epsilon = 20, n_samples = 1000)
 
-Model_postr_8 <- calculate_model_postr2(given_data3, given_data4, epsilon = 8, n_samples = 1000)
+Model_postr_15 <- model_posterior_3vs4(given_data3, given_data4, epsilon = 15, n_samples = 1000)
+
+Model_postr_10 <- model_posterior_3vs4(given_data3, given_data4, epsilon = 10, n_samples = 1000)
+
+Model_postr_8 <- model_posterior_3vs4(given_data3, given_data4, epsilon = 8, n_samples = 1000)
 ```
 
 Here are the outputs from the above code in a dataframe form for easy readability. We don't display the code for it, but it can be found in our RMD file. 
@@ -1150,7 +1437,7 @@ for (epsilon in names(model_postr2)) {
 
 ## Conclusion 
 
-Here we replicate some of the results proposed by Toni and Stumpf. In particular, we are able to reproduce figure 3. The 4-parameter model proposed in [1] gives a good way of telling whether the ABC procedure gives the same parameters for modeling two different outbreaks. From this, we conclude that outbreaks of the same strain of influenza are best modeled by a 2-parameter model and that outbreaks from different strains of influenza are best modeled by a 3-parameter model which accounts for differences in $q_c$ while leaving $q_h$ constant.
+Here we replicate some of the results proposed by Toni and Stumpf using ABC. In particular, we are able to reproduce Figure 3 along with Figure 1 from the Supplementary data. The 4-parameter model proposed in [1] gives a good way of telling whether the ABC procedure gives the same parameters for modeling two different outbreaks. Finally, we use ABC rejection sampler for model comparison to conclude that outbreaks of the same strain of influenza are best modeled by a 2-parameter model and that outbreaks from different strains of influenza are best modeled by a 3-parameter model which accounts for differences in $q_c$ while leaving $q_h$ constant.
 
 ## Appendix : Function Tests
 
@@ -1250,22 +1537,22 @@ test_that("frobenius_norm works on simple cases: zero matrix",{
   # The norm of the 0 matrix should be zero
   zero_matrix <-matrix(c(0,0,0,0,0,0,0,0,0), nrow=3)
   
-  expect_equivalent(frobenius_norm(zero_matrix), 0)
+  expect_equal(frobenius_norm(zero_matrix), 0)
 })
 
 test_that("frobenius_norm works on simple cases: c(1,2,0,-2)",{
   # Checks that the Frobenius norm is 3 on this simple case
   example_matrix <-matrix(c(1,2,0,-2), nrow=2)
   
-  expect_equivalent(frobenius_norm(example_matrix), 3)
+  expect_equal(frobenius_norm(example_matrix), 3)
 })
 
 ```
 
-### Tests for distance
+### Tests for avg_frob_distance
 
 ```{r}
-# Tests for distance
+# Tests for avg_frob_distance
 
 library(testthat)
 
@@ -1273,15 +1560,15 @@ test_that("distance throws error for bad parameters", {
   size1 = matrix(1, nrow=1)
   size2 = matrix(c(2,2,2,2), nrow =2)
   
-  expect_error(distance(size1, size1, size2, size1))   # Given_data_1 and simulated_data_1 have different sizes
-  expect_error(distance(size1, size1, size1, size2))  # Given_data_2 and simulated_data_2 have different sizes
+  expect_error(avg_frob_distance(size1, size1, size2, size1))   # Given_data_1 and simulated_data_1 have different sizes
+  expect_error(avg_frob_distance(size1, size1, size1, size2))  # Given_data_2 and simulated_data_2 have different sizes
 })
 
-test_that("distance works on simple cases: distance between given data and simulated data is 0 when given and simulated data are identical",{
+test_that("distance works on simple cases: distance between identical data is 0",{
   data_1 <- matrix(c(1,1,1,1), nrow=2)
   data_2 <- matrix(c(2,2,2,2), nrow=2)
   
-  expect_equivalent(distance(data_1, data_2, data_1, data_2), 0)
+  expect_equal(avg_frob_distance(data_1, data_2, data_1, data_2), 0)
 })
 
 test_that("distance works on simple cases",{
@@ -1289,7 +1576,7 @@ test_that("distance works on simple cases",{
   given_data_2 <- matrix(c(2,2,2,2), nrow=2)
   simulated_data_both <- matrix(c(0,0,0,0), nrow = 2)
   
-  expect_equivalent(distance(given_data_1, given_data_2, simulated_data_both,  simulated_data_both), 3)
+  expect_equal(avg_frob_distance(given_data_1, given_data_2, simulated_data_both,  simulated_data_both), 3)
 })
 
 ```
@@ -1303,18 +1590,43 @@ library(testthat)
 
 test_that("generate_abc_sample throws errors for bad parameters", {
   
-  expect_error(generate_abc_sample(given_data3, given_data4, distance, 
+  expect_error(generate_abc_sample(given_data3, given_data4, avg_frob_distance, 
                     prior_distribution, simulate_household_data, epsilon = -1)) # negative epsilon
-  expect_error(generate_abc_sample(given_data3, given_data4, distance, 
+  expect_error(generate_abc_sample(given_data3, given_data4, avg_frob_distance, 
                     prior_distribution, simulate_household_data, epsilon = 0)) # zero epsilon
 })
 
 ```
 
-### Tests for two parameter distance
+```{r}
+test_that("generate_abc_sample throws error for invalid prior distribution format", {
+  expect_error(generate_abc_sample(given_data3, given_data4, avg_frob_distance, 
+                    function() "invalid", simulate_household_data, epsilon = 10)) # Non-list, non-vector prior
+  expect_error(generate_abc_sample(given_data3, given_data4, avg_frob_distance, 
+                    function() list(), simulate_household_data, epsilon = 10)) # Empty list
+})
+```
 
 ```{r}
-# Tests for distance_2
+test_that("generate_abc_sample throws error for improperly named list elements", {
+    # Custom prior_distribution returning an incorrectly named list
+    bad_prior_distribution <- function() {
+        return(list(q_a1 = 0.5, q_h1 = 0.3, q_c2 = 0.2, q_h2 = 0.7)) # Incorrect names
+    }
+
+    expect_error(
+        generate_abc_sample(given_data3, given_data4, avg_frob_distance, 
+            bad_prior_distribution, simulate_household_data, epsilon = 100
+        )
+    )
+})
+```
+
+
+### Tests for frob_distance
+
+```{r}
+# Tests for frob_distance
 
 library(testthat)
 
@@ -1322,20 +1634,20 @@ test_that("distance_2 throws error for bad parameters", {
   size1 = matrix(1, nrow=1)
   size2 = matrix(c(2,2,2,2), nrow =2)
   
-  expect_error(distance_2(size1, size2))   # Given_data and simulated_data have different sizes
+  expect_error(frob_distance(size1, size2))   # Given_data and simulated_data have different sizes
 })
 
 test_that("distance works on simple cases: distance between given data and simulated data is 0 when given and simulated data are identical",{
   data_1 <- matrix(c(1,1,1,1), nrow=2)
   
-  expect_equivalent(distance_2(data_1, data_1), 0)
+  expect_equivalent(frob_distance(data_1, data_1), 0)
 })
 
 test_that("distance works on simple cases",{
   given_data <- matrix(c(1,1,1,1), nrow=2)
   simulated_data <- matrix(c(0,0,0,0), nrow = 2)
   
-  expect_equivalent(distance_2(given_data, simulated_data), 2)
+  expect_equivalent(frob_distance(given_data, simulated_data), 2)
 })
 
 ```
@@ -1347,15 +1659,66 @@ test_that("distance works on simple cases",{
 
 library(testthat)
 
-test_that("generate_abc_sample throws errors for bad parameters", {
+test_that("generate_abc_sample_2 throws errors for bad parameters", {
   
-  expect_error(generate_abc_sample_2(given_data1, distance_2, 
+  expect_error(generate_abc_sample_2(given_data1, avg_frob_distance, 
                     prior_distribution_2, simulate_household_data, epsilon = -1)) # negative epsilon
-  expect_error(generate_abc_sample_2(given_data1, distance_2, 
+  expect_error(generate_abc_sample_2(given_data1, avg_frob_distance, 
                     prior_distribution_2, simulate_household_data, epsilon = 0)) # zero epsilon
 })
 
 ```
+
+
+```{r}
+test_that("generate_abc_sample_2 throws error for invalid prior distribution format", {
+  expect_error(generate_abc_sample_2(given_data3, given_data4, avg_frob_distance, 
+                    function() "invalid", simulate_household_data, epsilon = 10)) # Non-list, non-vector prior
+  expect_error(generate_abc_sample_2(given_data3, given_data4, avg_frob_distance, 
+                    function() list(), simulate_household_data, epsilon = 10)) # Empty list
+})
+```
+
+```{r}
+test_that("generate_abc_sample_2 throws error for improperly named list elements", {
+    # Custom prior_distribution returning an incorrectly named list
+    bad_prior_distribution <- function() {
+        return(list(q_a = 0.5, q_x = 0.3)) # Incorrect names
+    }
+
+    expect_error(
+        generate_abc_sample_2(given_data3, given_data4, avg_frob_distance, 
+            bad_prior_distribution, simulate_household_data, epsilon = 100
+        )
+    )
+})
+```
+
+```{r}
+test_that("generate_abc_sample_2 throws error for invalid prior distribution length", {
+    # Custom prior_distribution returning an incorrectly named list
+    bad_prior_distribution <- function() {
+        return(c(0.1, 0.2, 0.3)) # Incorrect length
+    }
+
+    expect_error(
+        generate_abc_sample_2(given_data3, given_data4, avg_frob_distance, 
+            bad_prior_distribution, simulate_household_data, epsilon = 100
+        )
+    )
+})
+```
+
+```{r}
+test_that("generate_abc_sample_2 handles zero values in prior distribution", {
+  result <- generate_abc_sample_2(given_data3, given_data4, avg_frob_distance, 
+                                function() c(0, 0), 
+                                simulate_household_data, epsilon = 100) 
+  expect_equal(result[1], 0)       # Check that the first value is 0
+  expect_equal(result[2], 0)       # Check that the second value is 0
+})
+```
+
 
 ### Tests for generate_abc_sample_3
 
@@ -1364,17 +1727,113 @@ test_that("generate_abc_sample throws errors for bad parameters", {
 
 library(testthat)
 
-test_that("generate_abc_sample throws errors for bad parameters", {
+test_that("generate_abc_sample_3 throws errors for bad parameters", {
   
-  expect_error(generate_abc_sample_3(given_data1, given_data2, distance, 
+  expect_error(generate_abc_sample_3(given_data1, given_data2, avg_frob_distance, 
                     prior_distribution_3, simulate_household_data, epsilon = -1)) # negative epsilon
-  expect_error(generate_abc_sample_3(given_data1, given_data2, distance, 
+  expect_error(generate_abc_sample_3(given_data1, given_data2, avg_frob_distance, 
                     prior_distribution_3, simulate_household_data, epsilon = 0)) # zero epsilon
 })
 
 ```
 
-**Note:** Tests for the functions `calculate_model_postr` and `calculate_model_postr2` are not included but can be performed in a similar manner as the tests for `generate_abc_sample` functions.
+
+```{r}
+test_that("generate_abc_sample_3 throws error for invalid prior distribution format", {
+  expect_error(generate_abc_sample_3(given_data3, given_data4, avg_frob_distance, 
+                    function() "invalid", simulate_household_data, epsilon = 10)) # Non-list, non-vector prior
+  expect_error(generate_abc_sample_3(given_data3, given_data4, avg_frob_distance, 
+                    function() list(), simulate_household_data, epsilon = 10)) # Empty list
+})
+```
+
+```{r}
+test_that("generate_abc_sample_3 throws error for improperly named list elements", {
+    # Custom prior_distribution returning an incorrectly named list
+    bad_prior_distribution <- function() {
+        return(list(q_a = 0.5, q_x = 0.3, q_z = 0.9)) # Incorrect names
+    }
+
+    expect_error(
+        generate_abc_sample_3(given_data3, given_data4, avg_frob_distance, 
+            bad_prior_distribution, simulate_household_data, epsilon = 100
+        )
+    )
+})
+```
+
+```{r}
+test_that("generate_abc_sample_3 throws error for invalid prior distribution length", {
+    # Custom prior_distribution returning an incorrectly named list
+    bad_prior_distribution <- function() {
+        return(c(0.1, 0.2)) # Incorrect length
+    }
+
+    expect_error(
+        generate_abc_sample_3(given_data3, given_data4, avg_frob_distance, 
+            bad_prior_distribution, simulate_household_data, epsilon = 100
+        )
+    )
+})
+```
+
+```{r}
+test_that("generate_abc_sample_3 handles zero values in prior distribution", {
+  result <- generate_abc_sample_3(given_data3, given_data4, avg_frob_distance, 
+                                function() c(0, 0, 0), 
+                                simulate_household_data, epsilon = 100) 
+  expect_equal(result[1], 0)       # Check that the first value is 0
+  expect_equal(result[2], 0)       # Check that the second value is 0
+})
+```
+
+
+### Tests for generate_abc_sample_combined
+
+```{r}
+# Tests for generate_abc_sample_combined
+
+library(testthat)
+
+given_data <- combined_influenza_data  #dummy data
+
+test_that("generate_abc_sample_combined throws errors for bad parameters", {
+  
+  expect_error(generate_abc_sample_combined(given_data, frob_distance, 
+                    prior_distribution_2, simulate_household_data, epsilon = -1)) # Negative epsilon
+  expect_error(generate_abc_sample_combined(given_data, frob_distance, 
+                    prior_distribution_2, simulate_household_data, epsilon = 0)) # Zero epsilon
+})
+
+test_that("generate_abc_sample_combined throws error for invalid prior distribution format", {
+  expect_error(generate_abc_sample_combined(given_data, frob_distance, 
+                    function() "invalid", simulate_household_data, epsilon = 10)) # Non-list, non-vector prior
+  expect_error(generate_abc_sample_combined(given_data, frob_distance, 
+                    function() list(), simulate_household_data, epsilon = 10)) # Empty list
+})
+
+test_that("generate_abc_sample_combined throws error for improperly named list elements", {
+    # Custom prior_distribution returning an incorrectly named list
+    bad_prior_distribution <- function() {
+        return(list(q_x = 0.5, q_y = 0.3)) # Incorrect names
+    }
+
+    expect_error(generate_abc_sample_combined(given_data, frob_distance, 
+            bad_prior_distribution, simulate_household_data, epsilon = 100))
+})
+
+test_that("generate_abc_sample_combined throws error for invalid prior distribution length", {
+    # Custom prior_distribution returning a list/vector with incorrect length
+    bad_prior_distribution <- function() {
+        return(c(0.1)) # Incorrect length
+    }
+
+    expect_error(generate_abc_sample_combined(given_data, frob_distance, 
+            bad_prior_distribution, simulate_household_data, epsilon = 100))
+})
+
+```
+
 
 ## Bibliography
 
@@ -1384,4 +1843,4 @@ test_that("generate_abc_sample throws errors for bad parameters", {
 
 [3] Addy C, Jr IL and Haber M. A generalized stochastic model for the analysis of infectious disease final size data. Biometrics, 961–974, 1991.
 
-[4] Jr IL and Koopman J. Household and community transmission parameters from final distribu- tions of infections in households. Biometrics, 115–126, 1982.
+[4] Jr IL and Koopman J. Household and community transmission parameters from final distributions of infections in households. Biometrics, 115–126, 1982.
