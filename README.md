@@ -1,6 +1,6 @@
 # Approximate Bayesian Computation for Disease OutbreakABC for Influenza Epidemic Models
 
-![Project Logo](logo_abc.png =150x) 
+![Project Logo](logo_abc.png) 
 
 ## Overview
 
@@ -43,7 +43,7 @@ The accepted parameter values approximate the posterior distribution $P(q|D_{obs
 - **Acceptance Criterion**: If $d(D_{obs}, D^{*(i)}) < \epsilon$, accept $q^{(i)}$.
 
 The model posterior probability is approximated by the ratio of accepted samples:
-$$P(m^{(i)}|D_{obs}) \approx \frac{\text{# accepted samples for } m^{(i)}}{\text{# total accepted samples}}$$
+$$P(m^{(i)}|D_{obs}) \approx \frac{\text{\# accepted samples for } m^{(i)}}{\text{\# total accepted samples}}$$
 
 ---
 
