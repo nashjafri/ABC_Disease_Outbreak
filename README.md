@@ -35,16 +35,39 @@ For $i = 1, 2, \dots, N$:
 
 The accepted parameter values approximate the posterior distribution $P(q|D_{obs})$.
 
-### Model Comparison using ABC
+## Model Comparison using ABC rejection sampler
 
-- **Input**: A set of models to compare: $m^{(i)} \in M$.
-- **Prior**: $P(m)$ for models and $P(q | m)$ for parameters.
-- **Simulation**: Generate $D^{*(i)} \sim f(q^{(i)} | m^{(i)})$.
-- **Acceptance Criterion**: If $d(D_{obs}, D^{*(i)}) < \epsilon$, accept $q^{(i)}$.
+We can also use ABC to compare different models. Below is a brief algorithm showing how to do the same:
 
-The model posterior probability is approximated by the ratio of accepted samples:
-$$P(m^{(i)}|D_{obs}) \approx \frac{\text{\# accepted samples for } m^{(i)}}{\text{\# total accepted samples}}$$
+**Inputs:**
 
+* A set of models to compare: $m^{(i)} \in M$
+
+* Prior over models $P(m)$
+
+* Prior over parameters for every model $P(q | m)$
+
+* Data simulator: $f(q|m) = D^*(q)$
+
+* Tolerance $\epsilon$
+
+**Simulations:** for $i = 1, 2, \dots, N$
+
+* Sample model $m^{(i)} \sim P(m)$
+
+* Sample parameters $q^{(i)} \sim P(q|m^{(i)})$
+
+* Generate $D^{*(i)} \sim f(q^{(i)} | m^{(i)})$
+
+**Accept/Reject Criterion:**
+
+* If $d(D_{obs}, D^{*(i)}) < \epsilon$, accept $q^{(i)}$, else reject.
+
+**Model Posterior Probability Approximation:**
+
+* The ratio of number of accepted parameter values approximate the model posterior distribution $P(m^{(i)}|D_{obs})$.
+
+$$P(m^{(i)}|D_{obs}) \approx \cfrac{\text{number of accepted samples for } m^{(i)}}{\text{total number of accepted samples}}$$
 ---
 
 ## Conclusion
