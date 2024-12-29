@@ -1,6 +1,6 @@
 # Approximate Bayesian Computation for Disease Outbreak
 
-![Project Logo](logo_abc.png) 
+<center><img src="logo_abc.png" width="400" /></center>
 
 ## Overview
 
@@ -73,5 +73,3 @@ $$P(m^{(i)}|D_{obs}) \approx \cfrac{\text{number of accepted samples for } m^{(i
 ## Conclusion
 
 By applying ABC to model influenza outbreaks, we show that the 4-parameter model performs well in distinguishing parameters for different outbreaks. Furthermore, using the ABC rejection sampler for model comparison, we conclude that outbreaks of the same strain of influenza are best modeled by a 2-parameter model, whereas outbreaks of different strains are better modeled by a 3-parameter model.
-
-   git clone https://github.com/yourusername/abc-influenza-model.git
