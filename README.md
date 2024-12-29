@@ -1,4 +1,4 @@
-# Approximate Bayesian Computation for Disease OutbreakABC for Influenza Epidemic Models
+# Approximate Bayesian Computation for Disease Outbreak
 
 ![Project Logo](logo_abc.png) 
 
