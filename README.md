@@ -1,6 +1,6 @@
 # Approximate Bayesian Computation for Disease OutbreakABC for Influenza Epidemic Models
 
-![Project Logo](logo_abc.png) 
+![Project Logo](logo_abc.png =150x) 
 
 ## Overview
 
@@ -13,10 +13,6 @@ This project applies Approximate Bayesian Computation (ABC) to fit parameters in
 The primary objectives of this project are:
 
 - Replicate the model selection results in [Tony and Stumpf's paper](https://watermark.silverchair.com/bioinformatics_26_1_104.pdf?token=AQECAHi208BE49Ooan9kkhW_Ercy7Dm3ZL_9Cf3qfKAc485ysgAAA3swggN3BgkqhkiG9w0BBwagggNoMIIDZAIBADCCA10GCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMjV15kHzFknWstbVZAgEQgIIDLvGZcFAgMxJ2FtxTGrsPvkAoO-imsFvwyY2RJRbPWpz_WYOR3ZYIIXnJpmCp_pOOlhB9fGwvPCCBNkFN7jjQvo-jtSs3vYGT9U9ABO1ngcGxGq0M_-xfz5QDNcfLJpdHphXjvXPmNQKw-FbmW7Z-lM4VADhWgRMXeAa69IcQWbf3O3M4YVlAfOhNibTRLt8QLpayutZlbZAwX6aC2a13wmjnKF6Vx3WJWazbewssqJov9CmNXprFKUqnhcq1QLZ4oaGSKYaxVFpmwB2ZylzUBbliQ3fYN6VRAfleLXrmyvOymid2GtXNnhrslyx6SN2OSgbXU0YIgfSgCk5OaCETsFY7VMGzLCuUTB776n6hDJKcZ-Hb7RelIJxLeOZteaxRVOiu-a9pG5NbQQuueQtS0C-kqHlVksEwUAucqzS9UXX3ucvmsIgYK-jQQ8jmtqPTjVkdFGhR1J3LzOw7VJCJQy4b_a_WZLDNS7bskxvvZgU7DOZAVHxYu1aPUHh3UaeJ-5oMwJ-sqFWg_6ZruUPk4L9f1KB1siRgSmxw-Eo4JHKXjSEsIXAylD3m_trgxEIxkeqgXFJ867U-qJxeG39ToS9BptAG_IGK-HfMD0ovPK9mKHXvrp32fRO5S0oiqaCMa8kV4DGwbZjaMArJDV9Ps3WNw_EE2E8m7J4UjiqLNQkihUtUM6d4xmJ-S4zo-qPJkr0ajWkDhQwkeJ1wsaYGXItivcoAB4lzyQmG3Zs5kQQIIa2m4hveEf2mDlglHMoPHTAN5hGG-9_LegexhFcKAZTguF4nNpozqAVsIQaj8DeAaHWY8AvjP5HjDTgYHs4ni3w7EjULGDSroFhBndTpCAMNjtY9yIqoh248Bf7ayWtBCXUx1yJyIamAPGeHej3nPnf80TACr2Of6fJicQ-hFcdVGzQj8qiq8b9GuOFFJ43SnZudftdAwwlA0mQb30ZhvgJvsYngGY752-NegVEd2F_r6N2Jkw-G-fzEnoObf6OXzGaYlNSq4_s4vGnQ38HGe_HPk7fdDIESUA35j1SbK5K83274IWvReND0Byubb2MmgZ4fJ90sCCKnjLeu9ho), using a 4-parameter model and observed data from **Table 2** (Addy et al., 1991) and **Table 3** (Longini and Koopman, 1982) from the [Supplementary Data](https://academic.oup.com/bioinformatics/article/26/1/104/182571).
-
-- **Recreate Figures**:
-  - **Figure 1(a)** and **Figure 1(b)** from Supplementary Data.
-  - **Figure 3(a)** and **Figure 3(c)** using a 4-parameter model.
 
 ---
 
@@ -53,14 +49,6 @@ $$P(m^{(i)}|D_{obs}) \approx \frac{\text{# accepted samples for } m^{(i)}}{\text
 
 ## Conclusion
 
-By applying ABC to model influenza outbreaks, we were able to replicate key results from the paper by Toni and Stumpf. The results show that the 4-parameter model performs well in distinguishing parameters for different outbreaks. Furthermore, using the ABC rejection sampler for model comparison, we conclude that outbreaks of the same strain of influenza are best modeled by a 2-parameter model, whereas outbreaks of different strains are better modeled by a 3-parameter model.
+By applying ABC to model influenza outbreaks, we show that the 4-parameter model performs well in distinguishing parameters for different outbreaks. Furthermore, using the ABC rejection sampler for model comparison, we conclude that outbreaks of the same strain of influenza are best modeled by a 2-parameter model, whereas outbreaks of different strains are better modeled by a 3-parameter model.
 
----
-
-## Installation
-
-To run the project locally:
-
-1. Clone the repository:
-   ```bash
    git clone https://github.com/yourusername/abc-influenza-model.git
